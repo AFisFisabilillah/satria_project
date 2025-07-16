@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('admin_cabangs', function (Blueprint $table) {
             $table->id();
+            $table->string("nama_ac");
+            $table->string("email_ac");
+            $table->string("password_ac");
+            $table->string("telp_ac");
+            $table->unsignedBigInteger("cabang_id");
+            $table->foreign("cabang_id")->references("id_cabang")->on("cabangs")->onDelete('cascade');
             $table->timestamps();
         });
     }

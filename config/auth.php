@@ -36,10 +36,19 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+        'pelamar' =>[
+            "driver" => "sanctum",
+            "provider" => "kandidat"
         ],
+        'admin_cabang' =>[
+            "driver" => "sanctum",
+            "provider" => "admin_cabang"
+        ],
+        'super_admin'=>[
+            "driver" => "sanctum",
+            "provider" => "super_admin"
+        ]
+
     ],
 
     /*
@@ -60,10 +69,18 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'kandidat'=>[
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\Kandidat::class,
         ],
+        'admin_cabang'=>[
+            'driver' => 'eloquent',
+            'model' => App\Models\AdminCabang::class,
+        ],
+        'super_admin'=>[
+            'driver' => 'eloquent',
+            'model' => App\Models\SuperAdmin::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
