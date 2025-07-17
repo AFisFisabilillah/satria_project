@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\SuperAdmin;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +15,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+//        $this->call([
+//            CabangSeed::class
+//        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        SuperAdmin::create([
+            "name_super_admin" => "admin",
+            "email_super_admin" => "admin@gmail.com",
+            "password_super_admin" => Hash::make("admin"),
         ]);
     }
 }

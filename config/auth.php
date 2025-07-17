@@ -38,7 +38,7 @@ return [
     'guards' => [
         'pelamar' =>[
             "driver" => "sanctum",
-            "provider" => "kandidat"
+            "provider" => "pelamar"
         ],
         'admin_cabang' =>[
             "driver" => "sanctum",
@@ -69,9 +69,9 @@ return [
     */
 
     'providers' => [
-        'kandidat'=>[
+        'pelamar'=>[
             'driver' => 'eloquent',
-            'model' => App\Models\Kandidat::class,
+            'model' => App\Models\Pelamar::class,
         ],
         'admin_cabang'=>[
             'driver' => 'eloquent',

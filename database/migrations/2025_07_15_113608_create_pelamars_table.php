@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string("nama_pelamar", 100);
             $table->string("email_pelamar", 100)->unique("email_unique");
             $table->string("telp_pelamar", 100)->unique("telp_unique");
-            $table->string("provinsi_pelamar", 100)->nullable();
             $table->string("ttl_pelamar", 100)->nullable();
             $table->string("domisili_pelamar", 100);
             $table->string("status_nikah_pelamar", 100)->nullable();
