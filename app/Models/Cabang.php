@@ -28,5 +28,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Cabang extends Model
 {
-    //
+    protected $primaryKey = 'id_cabang';
+    protected $fillable = ['id_cabang','nama_cabang',"alamat_cabang","kota_cabang","kepala_cabang"];
 }

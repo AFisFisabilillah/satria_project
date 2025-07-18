@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CabangController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\SuperAdminController;
 use Illuminate\Http\Request;
@@ -18,4 +19,11 @@ Route::post("/super-admin/login", [SuperAdminController::class, "login"]);
 Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/profile", [SuperAdminController::class, "profile"]);
     Route::get("/super-admin/logout", [SuperAdminController::class, "logout"]);
+
+//    Cabang
+    Route::post("/cabang", [CabangController::class, "create"]);
+    Route::get("/cabang", [CabangController::class, "getCabang"]);
+    Route::get("/cabang/{cabangId}", [CabangController::class, "getCabangById"]);
+    Route::put("/cabang/{cabangId}", [CabangController::class, "update"]);
+    Route::delete("/cabang/{cabangId}", [CabangController::class, "delete"]);
 });
