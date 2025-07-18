@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminCabangLoginRequest;
 use App\Http\Requests\AdminCabangRequest;
 use App\Http\Requests\AdminCabangUpdateRequest;
 use App\Http\Resources\AdminCabangResource;
@@ -93,5 +94,34 @@ class AdminCabangController extends Controller
             return response()->json(["message" => "Admin Cabang Tidak Ditemukan"], 404);
         }
         return new AdminCabangResource($adminCabang);
+    }
+
+    public function login(AdminCabangLoginRequest $request){
+        $data = $request->validated();
+        $adminCabang = AdminCabang::where("email_ac", $data['email'])->first();
+        if(!$adminCabang || !Hash::check($data['password'], $adminCabang->password_ac)){
+            return response()->json(["message" => "Password atau Email, Salah !"], 401);
+        }
+        $token = $adminCabang->createToken("auth_token")->plainTextToken;
+        return response()->json([
+            "data" =>[
+                "nama"=>$adminCabang->nama_ac,
+                "email"=>$adminCabang->email_ac,
+                "token"=>$token,
+            ]
+        ]);
+    }
+    public function profile()
+    {
+        $adminCabang = auth("admin_cabang")->user();
+        return new AdminCabangResource($adminCabang);
+    }
+    public function logout()
+    {
+        $adminCabang = auth("admin_cabang")->user();
+        $adminCabang->currentAccessToken()->delete();
+        return response()->json([
+            "message" => "Logout berhasil"
+        ]);
     }
 }

@@ -35,3 +35,10 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::delete("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "delete"]);
     Route::get("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "getByid"]);
 });
+
+//Admin Cabang
+Route::post("/admin-cabang/login", [AdminCabangController::class, "login"]);
+Route::middleware(['auth:admin_cabang'])->group(function () {
+    Route::get("/admin-cabang/profile", [AdminCabangController::class, "profile"]);
+    Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
+});
