@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -35,5 +36,12 @@ use Laravel\Sanctum\HasApiTokens;
 class AdminCabang extends Model
 {
     use HasApiTokens, Notifiable;
+
+    protected $fillable = ["cabang_id","nama_ac", "telp_ac", "email_ac","password_ac"];
+
+    public function cabang(): BelongsTo
+    {
+        return $this->belongsTo(Cabang::class, "cabang_id", "id_cabang");
+    }
 
 }

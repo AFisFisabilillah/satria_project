@@ -43,7 +43,7 @@ class Lowongan extends Model
     protected $primaryKey = 'id_lowongan';
 
     public function pendaftarans(){
-        $this->hasMany(Pendaftaran::class);
+        return $this->hasMany(Pendaftaran::class);
     }
 
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminCabangController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\SuperAdminController;
@@ -26,4 +27,11 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/cabang/{cabangId}", [CabangController::class, "getCabangById"]);
     Route::put("/cabang/{cabangId}", [CabangController::class, "update"]);
     Route::delete("/cabang/{cabangId}", [CabangController::class, "delete"]);
+
+//    Admin Cabang
+    Route::post("/cabang/{cabangId}/admin-cabang", [AdminCabangController::class, "create"]);
+    Route::get("/cabang/{cabangId}/admin-cabang", [AdminCabangController::class, "getAllAdminCabangs"]);
+    Route::put("/cabang/{cabangId}/admin-cabang/{adminCabangId}", [AdminCabangController::class, "update"]);
+    Route::delete("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "delete"]);
+    Route::get("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "getByid"]);
 });
