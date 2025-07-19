@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -42,6 +43,11 @@ class AdminCabang extends Model
     public function cabang(): BelongsTo
     {
         return $this->belongsTo(Cabang::class, "cabang_id", "id_cabang");
+    }
+
+    public function lowongans()
+    {
+       return $this->hasMany(Lowongan::class, "admin_cabang_id", "id");
     }
 
 }

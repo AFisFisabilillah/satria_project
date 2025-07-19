@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminCabangController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\SuperAdminController;
 use Illuminate\Http\Request;
@@ -41,4 +42,11 @@ Route::post("/admin-cabang/login", [AdminCabangController::class, "login"]);
 Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::get("/admin-cabang/profile", [AdminCabangController::class, "profile"]);
     Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
+
+//    Lowongan
+    Route::post("/lowongan", [LowonganController::class, "create"]);
+    Route::get("/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
+    Route::put("/lowongan/{lowonganId}", [LowonganController::class, "update"]);
+    Route::delete("/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
+    Route::get("/lowongan",[LowonganController::class, "searchLowonganAdminCabang"]);
 });
