@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminCabangController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\PelamarController;
+use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\SuperAdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,14 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::put("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "update"]);
     Route::delete("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
     Route::get("/admin-cabang/lowongan",[LowonganController::class, "searchLowonganAdminCabang"]);
+
+//    Pendaftaran
+    Route::get("/admin-cabang/lowongan/{lowonganId}/pendaftaran",[\App\Http\Controllers\PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
+    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
+    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/interview",[PendaftaranController::class, "changeStatusToInterview"]);
+    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/accepted",[PendaftaranController::class, "changeStatusToAccepted"]);
+    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
+
 });
 
-//public
+

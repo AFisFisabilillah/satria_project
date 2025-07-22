@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class AdminPendaftaranResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            "id"=>$this->id_pendaftaran,
+            "pelamar"=>[
+                "id"=>$this->pelamar->id_pelamar,
+                "nama"=>$this->pelamar->nama_pelamar,
+                "email"=>$this->pelamar->email_pelamar,
+                "domisili"=>$this->pelamar->domisili_pelamar,
+                "umur"=>Carbon::parse($this->pelamar->ttl_pelamar)->age
+            ],
+            "waktu_pendaftaran" =>$this->waktu_pendaftaran,
+            "status"=>$this->status_pendaftaran->value,
+            "deskripsi_status"=>$this->status_pendaftaran->label()
+        ];
+    }
+}

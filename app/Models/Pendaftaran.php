@@ -33,6 +33,9 @@ class Pendaftaran extends Model
     protected $fillable = ["pelamar_id", "lowongan_id", "waktu_pendaftaran", "status_pendaftaran"];
     protected  $primaryKey = "id_pendaftaran";
 
+    protected $casts = [
+        "status_pendaftaran" => StatusPendaftaran::class,
+    ];
 
 
     public function lowongan()
