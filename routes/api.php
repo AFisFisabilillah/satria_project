@@ -48,6 +48,12 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::put("/cabang/{cabangId}/admin-cabang/{adminCabangId}", [AdminCabangController::class, "update"]);
     Route::delete("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "delete"]);
     Route::get("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "getByid"]);
+
+//    Lowongan
+    Route::get("/super-admin/lowongan/search",[LowonganController::class, "searchLowongan"]);
+    Route::get("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminGetLowongan"]);
+    Route::put("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminUpdateLowongan"]);
+    Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminDeleteLowongan"]);
 });
 
 //Admin Cabang

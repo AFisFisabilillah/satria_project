@@ -167,4 +167,57 @@ class LowonganController extends Controller
         ]);
     }
 
+    public function superAdminGetLowongan(int $lowonganId)
+    {
+        $lowongan = Lowongan::find($lowonganId);
+        if (!$lowongan) {
+            return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
+        }
+
+        return new LowonganResource($lowongan);
+    }
+
+    public function superAdminUpdateLowongan(LowonganRequest $request, int $lowonganId)
+    {
+        $data = $request->validated();
+
+        $lowongan = DB::transaction(function () use ($lowonganId, $data) {
+
+            $lowongan = Lowongan::find($lowonganId);
+
+            if (!$lowongan) {
+                return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
+            }
+
+            $lowongan->nama_lowongan = $data["nama"];
+            $lowongan->syarat_lowongan = $data["syarat"];
+            $lowongan->deskripsi_lowongan = $data["deskripsi"];
+            $lowongan->posisi_lowongan = $data["posisi"];
+            $lowongan->gaji_lowongan = $data["gaji"];
+            $lowongan->deadline_lowongan = $data["deadline"];
+            $lowongan->negara_lowongan = $data["negara"];
+            $lowongan->kontrak_lowongan = $data["kontrak"];
+            $lowongan->lokasi_lowongan = $data["lokasi"];
+            $lowongan->currency = $data["currency"];
+            $lowongan->kuota_lowongan = $data["kuota_lowongan"];
+            $lowongan->save();
+            return $lowongan;
+        });
+
+        return new LowonganResource($lowongan);
+    }
+
+    public function superAdminDeleteLowongan(int $lowonganId)
+    {
+        $lowongan = Lowongan::find($lowonganId);
+
+        if (!$lowongan) {
+            return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
+        }
+
+        $lowongan->delete();
+        return response()->json(["message" => "Data lowongan telah dihapus"], 200);
+
+    }
+
 }
