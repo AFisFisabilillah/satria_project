@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Route;
 Route::post("/pelamar/register", [PelamarController::class, "register"]);
 Route::post("/pelamar/login", [PelamarController::class, "login"]);
 Route::get("/lowongan/search",[LowonganController::class, "searchLowongan"]);
+Route::get("/filter/negara", [LowonganController::class, "filterNegara"]);
+Route::get("/filter/negara", [LowonganController::class, "filterNegara"]);
+Route::get("/filter/posisi", [LowonganController::class, "filterPosisi"]);
 
 Route::middleware(['auth:pelamar'])->group(function () {
    Route::get("/pelamar/profile", [PelamarController::class, "profile"]);
@@ -53,11 +56,11 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
 
 //    Lowongan
-    Route::post("/lowongan", [LowonganController::class, "create"]);
-    Route::get("/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
-    Route::put("/lowongan/{lowonganId}", [LowonganController::class, "update"]);
-    Route::delete("/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
-    Route::get("/lowongan",[LowonganController::class, "searchLowonganAdminCabang"]);
+    Route::post("/admin-cabang/lowongan", [LowonganController::class, "create"]);
+    Route::get("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
+    Route::put("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "update"]);
+    Route::delete("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
+    Route::get("/admin-cabang/lowongan",[LowonganController::class, "searchLowonganAdminCabang"]);
 });
 
 //public

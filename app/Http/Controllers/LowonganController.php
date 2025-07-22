@@ -152,4 +152,19 @@ class LowonganController extends Controller
         return new LowonganPelamarResource($lowongan,["sudah_melamar"=>$sudahMelamar]);
     }
 
+    public function filterNegara()
+    {
+        $negara = Lowongan::select("negara_lowongan")->distinct()->pluck("negara_lowongan");
+        return response()->json([
+            "data"=>$negara
+        ]);
+    }
+
+    public function filterPosisi(){
+        $posisi = Lowongan::select("posisi_lowongan")->distinct()->pluck("posisi_lowongan");
+        return response()->json([
+            "data"=>$posisi
+        ]);
+    }
+
 }
