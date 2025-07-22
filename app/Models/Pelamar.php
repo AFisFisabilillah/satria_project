@@ -57,6 +57,6 @@ class Pelamar extends Model
 
     public function pendaftarans()
     {
-        $this->hasMany(Pendaftaran::class);
+       return $this->hasMany(Pendaftaran::class, "pelamar_id",'id_pelamar' );
     }
 }

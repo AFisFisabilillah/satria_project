@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\StatusPendaftaran;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,14 +30,22 @@ class Pendaftaran extends Model
 {
     use HasFactory;
 
+    protected $fillable = ["pelamar_id", "lowongan_id", "waktu_pendaftaran", "status_pendaftaran"];
     protected  $primaryKey = "id_pendaftaran";
+
+
 
     public function lowongan()
     {
-        return $this->belongsTo(Lowongan::class);
+        return $this->belongsTo(Lowongan::class, "lowongan_id", "id_lowongan");
     }
 
     public function pelamar(){
-        return $this->belongsTo(Pelamar::class);
+        return $this->belongsTo(Pelamar::class, "pelamar_id", "id_pelamar");
+    }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(StatusHistory::class, "pendaftaran_id", "id_pendaftaran");
     }
 }

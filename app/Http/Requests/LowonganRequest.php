@@ -32,7 +32,7 @@ class LowonganRequest extends FormRequest
             "kontrak"=>"required|string",
             "lokasi"=>"required|string",
             "currency"=>"required|string",
-            "jumlah_lowongan"=>"required|int",
+            "kuota_lowongan"=>"required|int",
         ];
     }
 }

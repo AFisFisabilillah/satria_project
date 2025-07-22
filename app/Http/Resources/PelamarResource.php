@@ -21,8 +21,9 @@ class PelamarResource extends JsonResource
             "domisili"=>$this->domisili_pelamar,
             "tanggal_lahir"=>$this->ttl_pelamar,
             "status_nikah"=>$this->status_nikah_pelamar,
-            "profile"=>$this->profile_pelamar,
-            "cv" => $this->cv_pelamar
+            "jenis_kelamin"=>$this->kelamin_pelamar,
+            "profile"=>asset("/storage/".$this->profile_pelamar),
+            "cv" => asset("/storage/".$this->cv_pelamar)
         ];
     }
 }

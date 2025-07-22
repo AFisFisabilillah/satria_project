@@ -24,7 +24,7 @@ class LowonganResource extends JsonResource
             "deadline"=>$this->deadline_lowongan,
             "kontrak"=>$this->kontrak_lowongan,
             "currency"=>$this->currency,
-            "jumlah_lowongan"=>$this->jumlah_lowongan,
+            "kuota_lowongan"=>$this->kuota_lowongan,
             "status_lowongan"=>$this->status_lowongan,
             "lokasi"=>$this->lokasi_lowongan,
             "created_at"=>Carbon::parse($this->created_at)->diffForHumans(),

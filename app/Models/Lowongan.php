@@ -41,10 +41,10 @@ use Illuminate\Database\Eloquent\Model;
 class Lowongan extends Model
 {
     protected $primaryKey = 'id_lowongan';
-    protected $fillable = ["admin_cabang_id", "nama_lowongan", "deskripsi_lowongan", "syarat_lowongan","posisi_lowongan","gaji_lowongan", "deadline_lowongan", "negara_lowongan", "kontrak_lowongan", "lokasi_lowongan", "currency", "jumlah_lowongan", "status_lowongan"];
+    protected $fillable = ["admin_cabang_id", "nama_lowongan", "deskripsi_lowongan", "syarat_lowongan","posisi_lowongan","gaji_lowongan", "deadline_lowongan", "negara_lowongan", "kontrak_lowongan", "lokasi_lowongan", "currency", "kuota_lowongan", "status_lowongan"];
 
     public function pendaftarans(){
-        return $this->hasMany(Pendaftaran::class);
+        return $this->hasMany(Pendaftaran::class, "lowongan_id", "id_lowongan");
     }
 
     public function adminCabang()
