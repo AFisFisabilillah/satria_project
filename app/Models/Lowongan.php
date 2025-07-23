@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id_lowongan
@@ -40,6 +41,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Lowongan extends Model
 {
+    use SoftDeletes;
     protected $primaryKey = 'id_lowongan';
     protected $fillable = ["admin_cabang_id", "nama_lowongan", "deskripsi_lowongan", "syarat_lowongan","posisi_lowongan","gaji_lowongan", "deadline_lowongan", "negara_lowongan", "kontrak_lowongan", "lokasi_lowongan", "currency", "kuota_lowongan", "status_lowongan"];
 

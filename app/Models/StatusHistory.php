@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\StatusPendaftaran;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StatusHistory extends Model
 {
+    use SoftDeletes;
     protected $table = 'status_histories';
     protected $fillable = [
         "pendaftaran_id", "status", "changed_at"

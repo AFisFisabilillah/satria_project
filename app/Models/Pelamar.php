@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -48,7 +49,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  */
 class Pelamar extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens, HasFactory, SoftDeletes;
 
     protected $primaryKey = "id_pelamar";
     protected $fillable = ['nama_pelamar', 'email_pelamar', 'telp_pelamar','provinsi_pelamar','ttl_pelamar','domisili_pelamar','status_nikah_pelamar','profile_pelamar','cv_pelamar','password_pelamar'];

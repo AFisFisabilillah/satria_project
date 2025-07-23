@@ -5,6 +5,7 @@ namespace App\Models;
 use App\StatusPendaftaran;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id_pendaftaran
@@ -28,7 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Pendaftaran extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ["pelamar_id", "lowongan_id", "waktu_pendaftaran", "status_pendaftaran"];
     protected  $primaryKey = "id_pendaftaran";

@@ -7,6 +7,8 @@ use App\Http\Resources\LowonganPelamarResource;
 use App\Http\Resources\LowonganResource;
 use App\Http\Resources\LowonganSimpleResource;
 use App\Models\Lowongan;
+use App\Models\Pendaftaran;
+use App\Models\StatusHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -86,6 +88,10 @@ class LowonganController extends Controller
         }
 
         $isSuccess = DB::transaction(function () use ($lowongan) {
+            // Ambil semua pendaftaran_id berdasarkan lowongan_id
+            $pendaftaranIds = Pendaftaran::where('lowongan_id', $lowongan->id_lowongan)->pluck('id_pendaftaran');
+            $statusDelete = StatusHistory::whereIn('pendaftaran_id', $pendaftaranIds)->delete();
+            $pendaftarandelete  = Pendaftaran::whereIn('id_pendaftaran', $pendaftaranIds)->delete();
             return $lowongan->delete();
         });
 
@@ -215,9 +221,20 @@ class LowonganController extends Controller
             return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
         }
 
-        $lowongan->delete();
+        DB::transaction(function () use ($lowongan) {
+            // Ambil semua pendaftaran_id berdasarkan lowongan_id
+            $pendaftaranIds = Pendaftaran::where('lowongan_id', $lowongan->id_lowongan)->pluck('id_pendaftaran');
+            $statusDelete = StatusHistory::whereIn('pendaftaran_id', $pendaftaranIds)->delete();
+            $pendaftarandelete  = Pendaftaran::whereIn('id_pendaftaran', $pendaftaranIds)->delete();
+            return $lowongan->delete();
+        });
         return response()->json(["message" => "Data lowongan telah dihapus"], 200);
 
     }
+/*
+ * TODO
+ * 1. Fixed delete lowongan
+ * 2.
 
+*/
 }

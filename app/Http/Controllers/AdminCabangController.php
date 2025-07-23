@@ -76,6 +76,7 @@ class AdminCabangController extends Controller
         }
         DB::transaction(function () use ($cabang, $adminCabang){
            $adminCabang->delete();
+
         });
 
         return response()->json([

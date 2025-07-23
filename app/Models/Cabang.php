@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id_cabang
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Cabang extends Model
 {
+    use SoftDeletes;
     protected $primaryKey = 'id_cabang';
     protected $fillable = ['id_cabang','nama_cabang',"alamat_cabang","kota_cabang","kepala_cabang"];
 
