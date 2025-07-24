@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -29,7 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Cabang extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
     protected $primaryKey = 'id_cabang';
     protected $fillable = ['id_cabang','nama_cabang',"alamat_cabang","kota_cabang","kepala_cabang"];
 

@@ -47,6 +47,10 @@ return [
         'super_admin'=>[
             "driver" => "sanctum",
             "provider" => "super_admin"
+        ],
+        "admin_direktur" =>[
+            "driver" => "sanctum",
+            "provider" => "admin_direktur"
         ]
 
     ],
@@ -80,6 +84,10 @@ return [
         'super_admin'=>[
             'driver' => 'eloquent',
             'model' => App\Models\SuperAdmin::class,
+        ],
+        "admin_direktur"=>[
+            'driver' => 'eloquent',
+            "model"=>\App\Models\AdminDirektur::class
         ]
 
         // 'users' => [

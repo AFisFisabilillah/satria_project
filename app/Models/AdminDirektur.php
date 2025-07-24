@@ -35,4 +35,5 @@ use Laravel\Sanctum\HasApiTokens;
 class AdminDirektur extends Model
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
+    protected $fillable = ["nama_direktur", "email_direktur", "telp_direktur", "jabatan_direktur", "password_direktur"];
 }

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangePassword;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\PelamarRegisterRequest;
 use App\Http\Requests\ProfileCompleteRequest;
 use App\Http\Resources\PelamarResource;
+use App\Http\Resources\PelamarSimpleResource;
 use App\Http\Resources\PendaftaranResource;
 use App\Models\Lowongan;
 use App\Models\Pelamar;
@@ -142,13 +145,17 @@ class PelamarController extends Controller
             ->where('pelamar_id', $pelamar->id_pelamar)
             ->exists();
 
+        if(!$lowongan){
+            return response()->json(["message" => "Lowongan tidak ditemukan"], 404);
+        }
+
         if ($sudahDaftar) {
             return response()->json([
                 "message" => "Kamu sudah mendaftar lowongan ini"
             ], 400);
         }
 
-        if ($lowongan->kuota_lowongan == 0) {
+        if ($lowongan->kuota_lowongan== 0) {
             return response()->json([
                 "message" => "maaf kuota lowongan telah habis",
             ], 400);
@@ -189,9 +196,49 @@ class PelamarController extends Controller
             return new PendaftaranResource($pendaftaran);
         }catch (\Exception $e){
             DB::rollBack();
+            return response()->json(["message"=>$e->getMessage()],500);
         }
 
 
+    }
+
+    public function superAdminGetAllPelamar()
+    {
+        $size = Request::get("size", 10);
+        $q = Request::get("q", null);
+        $email = Request::get("email", null);
+        $domisili = Request::get("domsili", null);
+
+
+        $pelamar = Pelamar::when($q, function ($query) use ($q) {
+            $query->whereLike("nama_pelamar", "%$q%");
+        })->when($email, function ($query) use ($email) {
+            $query->whereLike("email_pelamar", "%$email%");
+        })->when($domisili, function ($query) use ($domisili) {
+            $query->where("domisili_pelamar", "$domisili");
+        })->paginate($size);
+        return PelamarSimpleResource::collection($pelamar);
+    }
+
+    public function superAdminGetDetailPelamar(int $pelamarId)
+    {
+        $pelamar = Pelamar::find($pelamarId);
+
+        return new PelamarResource($pelamar);
+    }
+
+    public function changePassword(int $pelamarId,ChangePasswordRequest $request){
+        $data = $request->validated();
+        $pelamar = Pelamar::find($pelamarId);
+        if (!$pelamar) {
+            return response()->json(["message"=>"pelamar Not Found!"], 404);
+        }
+
+        $pelamar->update([
+            "password_pelamar" => Hash::make($data["new_password"])
+        ]);
+
+        return new PelamarResource($pelamar);
     }
 
 }

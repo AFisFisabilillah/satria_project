@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminCabangController;
+use App\Http\Controllers\AdminDirekturController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\PelamarController;
@@ -54,6 +55,19 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminGetLowongan"]);
     Route::put("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminUpdateLowongan"]);
     Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminDeleteLowongan"]);
+
+    Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
+    Route::get("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
+    Route::patch("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "changePassword"]);
+
+//    Admin direktur
+    Route::post("/super-admin/admin-direktur",[AdminDirekturController::class, "create"]);
+    Route::get("/super-admin/admin-direktur",[AdminDirekturController::class, "getAll"]);
+    Route::get("/super-admin/admin-direktur/{adminDirekturId}",[AdminDirekturController::class, "get"]);
+    Route::post("/super-admin/admin/{adminDirekturId}",[AdminDirekturController::class, "updateAdmin"]);
+    Route::delete("/super-admin/admin-direktur/{adminDirekturId}",[AdminDirekturController::class, "delete"]);
+//    Lowongan
+    Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "superAdminGetPendaftaranByLowonganId"]);
 });
 
 //Admin Cabang
@@ -77,5 +91,11 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
 
 });
+
+Route::middleware("auth:admin_direktur")->group(function () {
+    Route::get("/admin-direktur/profile", [AdminDirekturController::class, "profile"]);
+});
+
+Route::post("/admin-direktur/login", [AdminDirekturController::class, "login"]);
 
 

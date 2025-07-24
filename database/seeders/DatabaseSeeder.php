@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-//        $this->call([
-//            CabangSeed::class
-//        ]);
+        $this->call([
+            CabangSeed::class
+        ]);
 
         SuperAdmin::create([
             "name_super_admin" => "admin",

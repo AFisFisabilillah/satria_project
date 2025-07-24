@@ -224,4 +224,37 @@ class PendaftaranController extends Controller
         return new AdminPendaftaranResource($pendaftaran);
     }
 
+    public function superAdminGetPendaftaranByLowonganId(int $lowonganId,Request $request){
+        $lowongan = Lowongan::find($lowonganId);
+        if (!$lowongan) {
+            return response()->json(["message" => "Lowongan tidak ditemukan"], 404);
+        }
+
+        $pendaftarans = $lowongan->pendaftarans()
+            ->with(['pelamar'])
+            ->paginate($request->get('size', 10));
+
+        return response()->json([
+            'data' => [
+                'lowongan' => new LowonganSimpleResource($lowongan),
+                'pendaftarans' => AdminPendaftaranResource::collection($pendaftarans->items()),
+            ],
+            'links' => [
+                'first' => $pendaftarans->url(1),
+                'last' => $pendaftarans->url($pendaftarans->lastPage()),
+                'prev' => $pendaftarans->previousPageUrl(),
+                'next' => $pendaftarans->nextPageUrl(),
+            ],
+            'meta' => [
+                'current_page' => $pendaftarans->currentPage(),
+                'from' => $pendaftarans->firstItem(),
+                'last_page' => $pendaftarans->lastPage(),
+                'path' => $request->url(),
+                'per_page' => $pendaftarans->perPage(),
+                'to' => $pendaftarans->lastItem(),
+                'total' => $pendaftarans->total(),
+            ]
+        ]);
+    }
+
 }
