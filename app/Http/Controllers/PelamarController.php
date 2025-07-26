@@ -107,13 +107,13 @@ class PelamarController extends Controller
         $pelamar = auth("pelamar")->user();
 
 
-        $cv = $request->file("cv", null);
+        $cv = $request->file("ktp", null);
         if ($cv) {
-            $filename = $this->handleFileUpload($cv, "cv", $pelamar->cv_pelamar, "cv", $pelamar->nama_pelamar);
+            $filename = $this->handleFileUpload($cv, "ktp", $pelamar->cv_pelamar, "ktp", $pelamar->nama_pelamar);
             $pelamar->cv_pelamar = $filename;
         } else if ($pelamar->cv_pelamar === null) {
             return response()->json([
-                "message" => "cv harus di isi",
+                "message" => "ktp harus di isi",
             ], 422);
         }
 
@@ -127,6 +127,7 @@ class PelamarController extends Controller
                 "message" => "profile harus di isi",
             ], 422);
         }
+
         $pelamar->kelamin_pelamar = $data["jenis_kelamin"];
         $pelamar->status_nikah_pelamar = $data["status_nikah"];
         $pelamar->ttl_pelamar = $data["tanggal_lahir"];
@@ -147,6 +148,10 @@ class PelamarController extends Controller
 
         if(!$lowongan){
             return response()->json(["message" => "Lowongan tidak ditemukan"], 404);
+        }
+
+        if(Carbon::parse($lowongan->batas_waktu)->isPast()){
+            return response()->json(["message" => "Batas waktu Lowongan sudah habis"], 400);
         }
 
         if ($sudahDaftar) {

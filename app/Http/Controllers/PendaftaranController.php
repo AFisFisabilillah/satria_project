@@ -51,11 +51,10 @@ class PendaftaranController extends Controller
         return new PendaftaranResource($pendaftaran);
     }
 
-    public function getAllPendaftaranByLowonganId(int $lowonganId,Request $request)
+    public function getAllPendaftaranByLowonganId(int $lowonganId,Request $request, )
     {
-        $adminCabang = auth("admin_cabang")->user();
 
-        $lowongan = $adminCabang->lowongans()->find($lowonganId);
+        $lowongan = Pendaftaran::find($lowonganId);
 
         if (!$lowongan) {
             return response()->json([

@@ -34,6 +34,7 @@ class LowonganPelamarResource extends JsonResource
             "created_at"=>Carbon::parse($this->created_at)->diffForHumans(),
             "created"=>Carbon::parse($this->created_at)->format('d M Y'),
             "sudah_melamar"=>$this->addtionalData["sudah_melamar"],
+            "sip2mi"=>$this->sip2mi
             ];
     }
 

@@ -56,7 +56,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/lowongan/search",[LowonganController::class, "searchLowongan"]);
     Route::get("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
     Route::put("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "update"]);
-    Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminDeleteLowongan"]);
+    Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
 
     Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
     Route::get("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
@@ -69,7 +69,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::post("/super-admin/admin/{adminDirekturId}",[AdminDirekturController::class, "updateAdmin"]);
     Route::delete("/super-admin/admin-direktur/{adminDirekturId}",[AdminDirekturController::class, "delete"]);
 //    Lowongan
-    Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "superAdminGetPendaftaranByLowonganId"]);
+    Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
 });
 
 //Admin Cabang

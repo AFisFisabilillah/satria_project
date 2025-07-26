@@ -155,62 +155,6 @@ class LowonganController extends Controller
         ]);
     }
 
-    public function superAdminGetLowongan(int $lowonganId)
-    {
-        $lowongan = Lowongan::find($lowonganId);
-        if (!$lowongan) {
-            return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
-        }
-
-        return new LowonganResource($lowongan);
-    }
-
-    public function superAdminUpdateLowongan(LowonganRequest $request, int $lowonganId)
-    {
-        $data = $request->validated();
-
-        $lowongan = DB::transaction(function () use ($lowonganId, $data) {
-
-            $lowongan = Lowongan::find($lowonganId);
-
-            if (!$lowongan) {
-                return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
-            }
-
-            $lowongan->nama_lowongan = $data["nama"];
-            $lowongan->syarat_lowongan = $data["syarat"];
-            $lowongan->deskripsi_lowongan = $data["deskripsi"];
-            $lowongan->posisi_lowongan = $data["posisi"];
-            $lowongan->gaji_lowongan = $data["gaji"];
-            $lowongan->negara_lowongan = $data["negara"];
-            $lowongan->kontrak_lowongan = $data["kontrak"];
-            $lowongan->currency = $data["currency"];
-            $lowongan->kuota_lowongan = $data["kuota_lowongan"];
-            $lowongan->save();
-            return $lowongan;
-        });
-
-        return new LowonganResource($lowongan);
-    }
-
-    public function superAdminDeleteLowongan(int $lowonganId)
-    {
-        $lowongan = Lowongan::find($lowonganId);
-
-        if (!$lowongan) {
-            return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
-        }
-
-        DB::transaction(function () use ($lowongan) {
-            // Ambil semua pendaftaran_id berdasarkan lowongan_id
-            $pendaftaranIds = Pendaftaran::where('lowongan_id', $lowongan->id_lowongan)->pluck('id_pendaftaran');
-            $statusDelete = StatusHistory::whereIn('pendaftaran_id', $pendaftaranIds)->delete();
-            $pendaftarandelete  = Pendaftaran::whereIn('id_pendaftaran', $pendaftaranIds)->delete();
-            return $lowongan->delete();
-        });
-        return response()->json(["message" => "Data lowongan telah dihapus"], 200);
-
-    }
 /*
  * TODO
  * 1. Fixed delete lowongan
