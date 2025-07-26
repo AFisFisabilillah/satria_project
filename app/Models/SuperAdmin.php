@@ -31,4 +31,5 @@ class SuperAdmin extends Model
 {
     use HasFactory, HasApiTokens,SoftDeletes;
 
+    protected $fillable = ["name_super_admin", "email_super_admin", "password_super_admin"];
 }

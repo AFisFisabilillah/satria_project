@@ -37,6 +37,12 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/profile", [SuperAdminController::class, "profile"]);
     Route::get("/super-admin/logout", [SuperAdminController::class, "logout"]);
 
+//    Super admin
+    Route::post("/super-admin", [SuperAdminController::class, "create"]);
+    Route::put("/super-admin/{superAdminId}", [SuperAdminController::class, "update"]);
+    Route::delete("/super-admin/{superAdminId}", [SuperAdminController::class, "delete"]);
+    Route::get("/super-admin", [SuperAdminController::class, "getAll"]);
+
 //    Cabang
     Route::post("/cabang", [CabangController::class, "create"]);
     Route::get("/cabang", [CabangController::class, "getCabang"]);
