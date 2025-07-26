@@ -94,4 +94,9 @@ class AdminDirekturController extends Controller
         $adminDirektur  = auth("admin_direktur")->user();
         return new AdminDirekturResource($adminDirektur);
     }
+
+
+    public function logout(){
+        auth("admin_direktur")->logout();
+    }
 }

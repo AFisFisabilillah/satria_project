@@ -94,6 +94,8 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
 
 Route::middleware("auth:admin_direktur")->group(function () {
     Route::get("/admin-direktur/profile", [AdminDirekturController::class, "profile"]);
+
+
 });
 
 Route::post("/admin-direktur/login", [AdminDirekturController::class, "login"]);
