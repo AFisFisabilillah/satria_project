@@ -46,9 +46,6 @@ class AdminCabang extends Model
         return $this->belongsTo(Cabang::class, "cabang_id", "id_cabang");
     }
 
-    public function lowongans()
-    {
-       return $this->hasMany(Lowongan::class, "admin_cabang_id", "id");
-    }
+
 
 }

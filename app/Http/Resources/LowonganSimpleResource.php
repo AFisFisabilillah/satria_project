@@ -18,11 +18,12 @@ class LowonganSimpleResource extends JsonResource
         return [
             "id"=>$this->id_lowongan,
             "nama"=>$this->nama_lowongan,
-            "lokasi"=>$this->lokasi_lowongan,
             "negara"=>$this->negara_lowongan,
             "created_at"=>Carbon::parse($this->created_at)->diffForHumans(),
-            "gaji"=>$this->currency." ".$this->gaji_lowongan,
-            "syarat"=>$this->syarat_lowongan
+            "gaji"=>$this->currency." ".number_format($this->min_gaji_lowongan, 0, ',', '.')." - ".number_format($this->max_gaji_lowongan, 0, ',', '.'),
+            "syarat"=>$this->syarat_lowongan,
+            "kuota_lowongan" => $this->kuota_lowongan,
+            "posisi"=>$this->posisi_lowongan
         ];
     }
 }

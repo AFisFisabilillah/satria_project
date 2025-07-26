@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 Route::post("/pelamar/register", [PelamarController::class, "register"]);
 Route::post("/pelamar/login", [PelamarController::class, "login"]);
 Route::get("/lowongan/search",[LowonganController::class, "searchLowongan"]);
+Route::get("/lowongan/{lowonganId}",[LowonganController::class, "getLowonganById"]);
+
 Route::get("/filter/negara", [LowonganController::class, "filterNegara"]);
 Route::get("/filter/negara", [LowonganController::class, "filterNegara"]);
 Route::get("/filter/posisi", [LowonganController::class, "filterPosisi"]);
@@ -23,7 +25,6 @@ Route::middleware(['auth:pelamar'])->group(function () {
    Route::post("/pelamar/update", [PelamarController::class, "profileComplete"]);
 
    Route::get("/pelamar/lowongan/{lowonganId}/lamar", [PelamarController::class, "lamar"]);
-   Route::get("/pelamar/lowongan/{lowonganId}", [LowonganController::class, "userGetLowonganById"]);
    Route::get("/pelamar/lowongan/{lowonganId}/pendaftaran", [\App\Http\Controllers\PendaftaranController::class, "getDetailPendaftaranByLowonganId"]);
 
    Route::get("/pelamar/pendaftaran", [\App\Http\Controllers\PendaftaranController::class, "userPendaftaran"]);
@@ -51,9 +52,10 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "getByid"]);
 
 //    Lowongan
+    Route::post("/super-admin/lowongan",[LowonganController::class, "create"]);
     Route::get("/super-admin/lowongan/search",[LowonganController::class, "searchLowongan"]);
-    Route::get("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminGetLowongan"]);
-    Route::put("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminUpdateLowongan"]);
+    Route::get("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
+    Route::put("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "update"]);
     Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "superAdminDeleteLowongan"]);
 
     Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
@@ -77,11 +79,7 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
 
 //    Lowongan
-    Route::post("/admin-cabang/lowongan", [LowonganController::class, "create"]);
-    Route::get("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
-    Route::put("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "update"]);
-    Route::delete("/admin-cabang/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
-    Route::get("/admin-cabang/lowongan",[LowonganController::class, "searchLowonganAdminCabang"]);
+
 
 //    Pendaftaran
     Route::get("/admin-cabang/lowongan/{lowonganId}/pendaftaran",[\App\Http\Controllers\PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
@@ -94,8 +92,6 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
 
 Route::middleware("auth:admin_direktur")->group(function () {
     Route::get("/admin-direktur/profile", [AdminDirekturController::class, "profile"]);
-
-
 });
 
 Route::post("/admin-direktur/login", [AdminDirekturController::class, "login"]);

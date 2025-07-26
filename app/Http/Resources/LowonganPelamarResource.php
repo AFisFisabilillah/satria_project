@@ -22,18 +22,17 @@ class LowonganPelamarResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return ["id" => $this->id_lowongan,
-            "nama" => $this->nama_lowongan,
-            "deskripsi" => $this->deskripsi_lowongan,
-            "posisi" => $this->posisi_lowongan,
-            "gaji" => $this->gaji_lowongan,
-            "deadline" => $this->deadline_lowongan,
-            "kontrak" => $this->kontrak_lowongan,
-            "currency" => $this->currency,
-            "kuota_lowongan" => $this->kuota_lowongan,
-            "status_lowongan" => $this->status_lowongan,
-            "lokasi" => $this->lokasi_lowongan,
-            "created_at" => Carbon::parse($this->created_at)->diffForHumans(),
+        return ["id"=>$this->id_lowongan,
+            "nama"=>$this->nama_lowongan,
+            "deskripsi"=>$this->deskripsi_lowongan,
+            "syarat"=>$this->syarat_lowongan,
+            "posisi"=>$this->posisi_lowongan,
+            "gaji"=>$this->currency." ".number_format($this->min_gaji_lowongan, 0, ',', '.')." - ".number_format($this->max_gaji_lowongan, 0, ',', '.'),
+            "batas_waktu"=>$this->batas_waktu,
+            "currency"=>$this->currency,
+            "kuota_lowongan"=>$this->kuota_lowongan,
+            "created_at"=>Carbon::parse($this->created_at)->diffForHumans(),
+            "created"=>Carbon::parse($this->created_at)->format('d M Y'),
             "sudah_melamar"=>$this->addtionalData["sudah_melamar"],
             ];
     }

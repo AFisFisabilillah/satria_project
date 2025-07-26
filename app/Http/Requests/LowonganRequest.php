@@ -27,12 +27,12 @@ class LowonganRequest extends FormRequest
             "syarat"=>"required|string",
             "negara"=>"required|string",
             "posisi"=>"required|string",
-            "gaji"=>"required|int",
-            "deadline"=>"required|date_format:Y-m-d H:i|after:now",
-            "kontrak"=>"required|string",
-            "lokasi"=>"required|string",
+            "min_gaji"=>"required|int|min:0",
+            "max_gaji"=>"required|int|gt:min_gaji",
             "currency"=>"required|string",
             "kuota_lowongan"=>"required|int",
+            "sip2mi"=>"required|string",
+            "batas_waktu"=>"required|date|date_format:Y-m-d",
         ];
     }
 }

@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table("lowongans", function (Blueprint $table) {
            $table->dropColumn("jam_kerja");
            $table->string("currency");
-           $table->string("status_lowongan");
            $table->bigInteger("jumlah_lowongan");
            $table->fullText(["nama_lowongan","deskripsi_lowongan","posisi_lowongan"], "full_text_search_lowongan");
         });

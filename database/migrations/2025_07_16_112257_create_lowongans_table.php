@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('lowongans', function (Blueprint $table) {
             $table->id("id_lowongan");
-            $table->unsignedBigInteger("admin_cabang_id");
-            $table->foreign('admin_cabang_id')->references('id')->on('admin_cabangs');
             $table->string("nama_lowongan");
             $table->text("deskripsi_lowongan");
             $table->text("syarat_lowongan");
             $table->string("negara_lowongan");
             $table->string("posisi_lowongan");
             $table->string("jam_kerja");
-            $table->bigInteger("gaji_lowongan");
-            $table->timestamp("deadline_lowongan");
-            $table->string("kontrak_lowongan");
-            $table->string("lokasi_lowongan");
+            $table->string("max_gaji_lowongan");
+            $table->bigInteger("min_gaji_lowongan");
+            $table->string("sip2mi");
+            $table->date("batas_waktu");
             $table->timestamps();
         });
     }
