@@ -16,6 +16,7 @@ use App\Models\Pendaftaran;
 use App\Models\StatusHistory;
 use App\StatusPendaftaran;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -92,7 +93,7 @@ class PelamarController extends Controller
 
     private function handleFileUpload($file, $folder, $oldPathFile, $fileNamePrefix, $nama = "")
     {
-        if (!empty($oldPathFile)&&Storage::disk("public")->exists($oldPathFile)) {
+        if (!empty($oldPathFile) && Storage::disk("public")->exists($oldPathFile)) {
             Storage::disk("public")->delete($oldPathFile);
         }
         $newFileName = "$fileNamePrefix" . "_" . Str::uuid() . "_" . Str::replace(" ", "_", $nama) . "." . $file->getClientOriginalExtension();
@@ -146,11 +147,11 @@ class PelamarController extends Controller
             ->where('pelamar_id', $pelamar->id_pelamar)
             ->exists();
 
-        if(!$lowongan){
+        if (!$lowongan) {
             return response()->json(["message" => "Lowongan tidak ditemukan"], 404);
         }
 
-        if(Carbon::parse($lowongan->batas_waktu)->isPast()){
+        if (Carbon::parse($lowongan->batas_waktu)->isPast()) {
             return response()->json(["message" => "Batas waktu Lowongan sudah habis"], 400);
         }
 
@@ -160,7 +161,7 @@ class PelamarController extends Controller
             ], 400);
         }
 
-        if ($lowongan->kuota_lowongan== 0) {
+        if ($lowongan->kuota_lowongan == 0) {
             return response()->json([
                 "message" => "maaf kuota lowongan telah habis",
             ], 400);
@@ -174,7 +175,7 @@ class PelamarController extends Controller
         }
 
 
-        try{
+        try {
             DB::beginTransaction();
             $pendaftaran = Pendaftaran::create([
                 "lowongan_id" => $lowonganId,
@@ -199,9 +200,9 @@ class PelamarController extends Controller
             $pendaftaran->statusHistories = [$statusHistory];
 
             return new PendaftaranResource($pendaftaran);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(["message"=>$e->getMessage()],500);
+            return response()->json(["message" => $e->getMessage()], 500);
         }
 
 
@@ -211,16 +212,16 @@ class PelamarController extends Controller
     {
         $size = Request::get("size", 10);
         $q = Request::get("q", null);
-        $email = Request::get("email", null);
         $domisili = Request::get("domsili", null);
+        $gender = Request::get("gender", null);
 
 
         $pelamar = Pelamar::when($q, function ($query) use ($q) {
-            $query->whereLike("nama_pelamar", "%$q%");
-        })->when($email, function ($query) use ($email) {
-            $query->whereLike("email_pelamar", "%$email%");
+            $query->whereFullText(["nama_pelamar", "email_pelamar"], $q);
         })->when($domisili, function ($query) use ($domisili) {
             $query->where("domisili_pelamar", "$domisili");
+        })->when($gender, function (Builder $query)use ($gender) {
+            $query->where("gender_pelamar", $gender);
         })->paginate($size);
         return PelamarSimpleResource::collection($pelamar);
     }
@@ -232,11 +233,12 @@ class PelamarController extends Controller
         return new PelamarResource($pelamar);
     }
 
-    public function changePassword(int $pelamarId,ChangePasswordRequest $request){
+    public function changePassword(int $pelamarId, ChangePasswordRequest $request)
+    {
         $data = $request->validated();
         $pelamar = Pelamar::find($pelamarId);
         if (!$pelamar) {
-            return response()->json(["message"=>"pelamar Not Found!"], 404);
+            return response()->json(["message" => "pelamar Not Found!"], 404);
         }
 
         $pelamar->update([

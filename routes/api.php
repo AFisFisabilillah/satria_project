@@ -71,6 +71,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
 //    Lowongan
     Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
     Route::patch("/super-admin/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
+
 });
 
 //Admin Cabang
