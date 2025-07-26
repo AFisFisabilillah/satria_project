@@ -109,8 +109,8 @@ class PelamarController extends Controller
 
         $cv = $request->file("ktp", null);
         if ($cv) {
-            $filename = $this->handleFileUpload($cv, "ktp", $pelamar->cv_pelamar, "ktp", $pelamar->nama_pelamar);
-            $pelamar->cv_pelamar = $filename;
+            $filename = $this->handleFileUpload($cv, "ktp", $pelamar->ktp_pelamar, "ktp", $pelamar->nama_pelamar);
+            $pelamar->ktp_pelamar = $filename;
         } else if ($pelamar->cv_pelamar === null) {
             return response()->json([
                 "message" => "ktp harus di isi",

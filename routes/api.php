@@ -70,6 +70,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::delete("/super-admin/admin-direktur/{adminDirekturId}",[AdminDirekturController::class, "delete"]);
 //    Lowongan
     Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
+    Route::patch("/super-admin/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
 });
 
 //Admin Cabang
@@ -78,16 +79,12 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::get("/admin-cabang/profile", [AdminCabangController::class, "profile"]);
     Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
 
-//    Lowongan
-
-
 //    Pendaftaran
     Route::get("/admin-cabang/lowongan/{lowonganId}/pendaftaran",[\App\Http\Controllers\PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
-    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
-    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/interview",[PendaftaranController::class, "changeStatusToInterview"]);
-    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/accepted",[PendaftaranController::class, "changeStatusToAccepted"]);
-    Route::patch("/admin-cabang/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
-
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/interview",[PendaftaranController::class, "changeStatusToInterview"]);
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/accepted",[PendaftaranController::class, "changeStatusToAccepted"]);
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
 });
 
 Route::middleware("auth:admin_direktur")->group(function () {

@@ -53,8 +53,11 @@ class PendaftaranController extends Controller
 
     public function getAllPendaftaranByLowonganId(int $lowonganId,Request $request, )
     {
+        $gender = $request->get('gender');
+        $domisili = $request->get('domisili');
+        $q = $request->get('q');
 
-        $lowongan = Pendaftaran::find($lowonganId);
+        $lowongan = Lowongan::find($lowonganId);
 
         if (!$lowongan) {
             return response()->json([
@@ -63,6 +66,18 @@ class PendaftaranController extends Controller
         }
 
         $pendaftarans = $lowongan->pendaftarans()
+            ->whereHas('pelamar', function ($query) use ($gender, $domisili, $q) {
+                if ($gender) {
+                    $query->where('kelamin_pelamar', $gender);
+                }
+                if ($domisili) {
+                    $query->where('domisili_pelamar', $domisili);
+                }
+                if ($q) {
+                    $query->whereFullText(['nama_pelamar', 'email_pelamar'], $q);
+                }
+                $query->whereNull('cabang_id');
+            })
             ->with(['pelamar'])
             ->paginate($request->get('size', 10));
 
@@ -90,9 +105,8 @@ class PendaftaranController extends Controller
     }
     public function changeStatusToRiviewedByHrd( int $lowonganId, int $pendaftaranId )
     {
-        $adminCabang = auth("admin_cabang")->user();
 
-        $lowongan = $adminCabang->lowongans->find($lowonganId);
+        $lowongan = Lowongan::find($lowonganId);
 
         if (!$lowongan) {
             return response()->json([
@@ -110,6 +124,11 @@ class PendaftaranController extends Controller
         }
 
         $pendaftaran->status_pendaftaran = StatusPendaftaran::ReviewedByHR->value;
+
+        if (Auth::guard("admin_cabang")->check()) {
+            $pendaftaran->cabang_id = auth("admin_cabang")->user()->cabang_id;
+        }
+
         $pendaftaran->save();
 
         StatusHistory::create([
@@ -122,59 +141,86 @@ class PendaftaranController extends Controller
 
     public function changeStatusToInterview(int $lowonganId, int $pendaftaranId )
     {
-        $adminCabang = auth("admin_cabang")->user();
+        $pendaftaran = null;
+        $lowongan = null;
 
-        $lowongan = $adminCabang->lowongans->find($lowonganId);
+        if (Auth::guard("admin_cabang")->check()) {
 
-        if (!$lowongan) {
-            return response()->json([
-                'message' => 'Lowongan tidak ditemukan',
-            ], 404);
+            $adminCabang = auth("admin_cabang")->user();
+            $pendaftaran = $adminCabang->cabang->pendaftarans()->find($pendaftaranId);
+
+            if ($pendaftaran) {
+                $lowongan = $pendaftaran->lowongan; // Asumsi relasi lowongan ada di model Pendaftaran
+            }
+        } elseif (Auth::guard("super_admin")->check()) {
+
+            $lowongan = Lowongan::find($lowonganId);
+
+            if ($lowongan) {
+                $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId);
+            }
         }
 
-        $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId)->load("pelamar");
+
         if (!$pendaftaran) {
-            return response()->json(["message" => "pendaftaran tidak ditemukan"], 404);
-        }
-
-        if($pendaftaran->status_pendaftaran->value !== StatusPendaftaran::ReviewedByHR->value){
-            return response()->json(["message" => "Status pendaftaran harus 'reviewed by HR' terlebih dahulu sebelum aksi ini dapat dilakukan."
+            return response()->json([
+                "message" => "Pendaftaran tidak ditemukan"
             ], 404);
         }
 
-//        Mengubah status pendaftaran menjadi interview
+
+        $pendaftaran->load("pelamar");
+
+        if ($pendaftaran->status_pendaftaran->value !== StatusPendaftaran::ReviewedByHR->value) {
+            return response()->json([
+                "message" => "Status pendaftaran harus 'reviewed by HR' terlebih dahulu sebelum aksi ini dapat dilakukan."
+            ], 400);
+        }
+
         $pendaftaran->status_pendaftaran = StatusPendaftaran::Interview->value;
         $pendaftaran->save();
 
         StatusHistory::create([
-            "pendaftaran_id" => $pendaftaranId,
+            "pendaftaran_id" => $pendaftaran->id_pendaftaran,
             "status" => StatusPendaftaran::Interview->value,
         ]);
-
-
         return new AdminPendaftaranResource($pendaftaran);
+
     }
 
     public function changeStatusToAccepted(int $lowonganId, int $pendaftaranId )
     {
-        $adminCabang = auth("admin_cabang")->user();
+        $pendaftaran = null;
+        $lowongan = null;
 
-        $lowongan = $adminCabang->lowongans->find($lowonganId);
+        if (Auth::guard("admin_cabang")->check()) {
 
-        if (!$lowongan) {
+            $adminCabang = auth("admin_cabang")->user();
+            $pendaftaran = $adminCabang->cabang->pendaftarans()->find($pendaftaranId);
+
+            if ($pendaftaran) {
+                $lowongan = $pendaftaran->lowongan; // Asumsi relasi lowongan ada di model Pendaftaran
+            }
+        } elseif (Auth::guard("super_admin")->check()) {
+
+            $lowongan = Lowongan::find($lowonganId);
+
+            if ($lowongan) {
+                $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId);
+            }
+        }
+
+        if (!$pendaftaran) {
             return response()->json([
-                'message' => 'Lowongan tidak ditemukan',
+                "message" => "Pendaftaran tidak ditemukan"
             ], 404);
         }
 
-        $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId)->load("pelamar");
-        if (!$pendaftaran) {
-            return response()->json(["message" => "pendaftaran tidak ditemukan"], 404);
-        }
+        $pendaftaran->load("pelamar");
 
         if($pendaftaran->status_pendaftaran->value !== StatusPendaftaran::Interview->value){
             return response()->json(["message" => "Status pendaftaran harus 'Interview' terlebih dahulu sebelum aksi ini dapat dilakukan."
-            ], 404);
+            ], 400);
         }
 
 //        Mengubah status pendaftaran menjadi interview
@@ -191,20 +237,33 @@ class PendaftaranController extends Controller
 
     public function changeStatusToReject(int $lowonganId, int $pendaftaranId )
     {
-        $adminCabang = auth("admin_cabang")->user();
+        $pendaftaran = null;
+        $lowongan = null;
 
-        $lowongan = $adminCabang->lowongans->find($lowonganId);
+        if (Auth::guard("admin_cabang")->check()) {
 
-        if (!$lowongan) {
+            $adminCabang = auth("admin_cabang")->user();
+            $pendaftaran = $adminCabang->cabang->pendaftarans()->find($pendaftaranId);
+
+            if ($pendaftaran) {
+                $lowongan = $pendaftaran->lowongan; // Asumsi relasi lowongan ada di model Pendaftaran
+            }
+        } elseif (Auth::guard("super_admin")->check()) {
+
+            $lowongan = Lowongan::find($lowonganId);
+
+            if ($lowongan) {
+                $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId);
+            }
+        }
+
+        if (!$pendaftaran) {
             return response()->json([
-                'message' => 'Lowongan tidak ditemukan',
+                "message" => "Pendaftaran tidak ditemukan"
             ], 404);
         }
 
-        $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId)->load("pelamar");
-        if (!$pendaftaran) {
-            return response()->json(["message" => "pendaftaran tidak ditemukan"], 404);
-        }
+        $pendaftaran->load("pelamar");
 
         if($pendaftaran->status_pendaftaran->value === StatusPendaftaran::Accepted->value){
             return response()->json(["message" => "pelamar sudah diterima jadi tidak bisa di tolak"], 400);

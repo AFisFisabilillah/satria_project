@@ -52,4 +52,9 @@ class Pendaftaran extends Model
     {
         return $this->hasMany(StatusHistory::class, "pendaftaran_id", "id_pendaftaran");
     }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class, "cabang_id", "id_cabang");
+    }
 }

@@ -6,13 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
-        Schema::table('pelamars', function (Blueprint $table) {
-            $table->renameColumn("cv_pelamar", "ktp_pelamar");
+        Schema::table('pendaftarans', function (Blueprint $table) {
+            $table->unsignedBigInteger("cabang_id")->nullable();
+            $table->foreign("cabang_id")->references("id_cabang")->on("cabangs");
         });
     }
 
@@ -21,5 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
+        //
     }
 };

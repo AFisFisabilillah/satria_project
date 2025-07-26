@@ -37,4 +37,9 @@ class Cabang extends Model
     public function adminCabangs(){
         return $this->hasMany(AdminCabang::class, "cabang_id", "id_cabang");
     }
+
+    public function pendaftarans()
+    {
+        return $this->hasMany(Pendaftaran::class,"cabang_id", "id_cabang");
+    }
 }
