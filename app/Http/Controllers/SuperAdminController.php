@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginSuperAdminRequest;
 use App\Models\SuperAdmin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginSuperAdminRequest;
 
 class SuperAdminController extends Controller
 {
@@ -51,5 +53,24 @@ class SuperAdminController extends Controller
                 "email" => $superAdmin->email_super_admin
             ],
         ]);
+    }
+
+    public function dashboard(){
+       $data = DB::table('pelamars')->select(DB::raw('kelamin_pelamar as name'), DB::raw('count(*) as value'))->groupBy('name')->get();
+       $countLowongan = DB::table('lowongans')->count();
+       $countPendaftar = DB::table('pendaftarans')->count();
+       $countPelamar = DB::table('pelamars')->count();
+        $domisili = DB::table('pelamars')->select(DB::raw('domisili_pelamar as name'), DB::raw('count(*) as jumlah'))->groupBy('name')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                "gender" => $data,
+                "total_lowongan" => $countLowongan,
+                "total_kandidat" => $countPelamar,
+                "total_pendaftar" => $countPendaftar,
+                "domisili" => $domisili
+            ]
+            ]);
     }
 }

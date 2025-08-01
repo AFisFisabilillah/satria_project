@@ -19,12 +19,14 @@ class AdminPendaftaranResource extends JsonResource
             "id"=>$this->id_pendaftaran,
             "pelamar"=>[
                 "id"=>$this->pelamar->id_pelamar,
+                "profile"=>asset("/storage/".$this->pelamar->profile_pelamar),
                 "nama"=>$this->pelamar->nama_pelamar,
                 "email"=>$this->pelamar->email_pelamar,
+                "gender"=>$this->pelamar->kelamin_pelamar,
                 "domisili"=>$this->pelamar->domisili_pelamar,
                 "umur"=>Carbon::parse($this->pelamar->ttl_pelamar)->age
             ],
-            "waktu_pendaftaran" =>$this->waktu_pendaftaran,
+            "waktu_pendaftaran" => Carbon::parse($this->waktu_pendaftaran)->format('Y-m-d'),
             "status"=>$this->status_pendaftaran->value,
             "deskripsi_status"=>$this->status_pendaftaran->label()
         ];

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Lowongan;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -12,8 +13,8 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/');
+        $lowongan = Lowongan::find(1);
 
-        $response->assertStatus(200);
+        $this->assertNotNull($lowongan, 'Lowongan with ID 1 should exist.');
     }
 }

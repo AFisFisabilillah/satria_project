@@ -23,7 +23,7 @@ class PelamarResource extends JsonResource
             "status_nikah"=>$this->status_nikah_pelamar,
             "jenis_kelamin"=>$this->kelamin_pelamar,
             "profile"=>asset("/storage/".$this->profile_pelamar),
-            "cv" => asset("/storage/".$this->cv_pelamar)
+            "ktp" => asset("/storage/".$this->ktp_pelamar)
         ];
     }
 }

@@ -133,7 +133,7 @@ class LowonganController extends Controller
             })
             ->when($posisi, function ($query) use ($posisi) {
                 $query->where('posisi_lowongan', 'like', "%$posisi%");
-            })->orderBy("kuota_lowongan", "desc")
+            })->orderBy("kuota_lowongan", "desc")->whereNull('deleted_at')
             ->paginate($size);
         return LowonganSimpleResource::collection($lowongans);
     }

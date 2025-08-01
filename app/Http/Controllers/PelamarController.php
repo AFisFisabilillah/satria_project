@@ -48,7 +48,6 @@ class PelamarController extends Controller
                 "token" => $token,
             ]
         ]);
-
     }
 
     public function register(PelamarRegisterRequest $request)
@@ -71,7 +70,6 @@ class PelamarController extends Controller
                 "domisili" => $pelamar->domisili_pelamar,
             ]
         ], 201);
-
     }
 
     public function logout(Request $request)
@@ -195,7 +193,7 @@ class PelamarController extends Controller
 
             DB::commit();
 
-//        Memasukan secara manual
+            //        Memasukan secara manual
             $pendaftaran->lowongan = $lowongan;
             $pendaftaran->statusHistories = [$statusHistory];
 
@@ -204,15 +202,13 @@ class PelamarController extends Controller
             DB::rollBack();
             return response()->json(["message" => $e->getMessage()], 500);
         }
-
-
     }
 
     public function superAdminGetAllPelamar()
     {
         $size = Request::get("size", 10);
         $q = Request::get("q", null);
-        $domisili = Request::get("domsili", null);
+        $domisili = Request::get("domisili", null);
         $gender = Request::get("gender", null);
 
 
@@ -220,8 +216,8 @@ class PelamarController extends Controller
             $query->whereFullText(["nama_pelamar", "email_pelamar"], $q);
         })->when($domisili, function ($query) use ($domisili) {
             $query->where("domisili_pelamar", "$domisili");
-        })->when($gender, function (Builder $query)use ($gender) {
-            $query->where("gender_pelamar", $gender);
+        })->when($gender, function (Builder $query) use ($gender) {
+            $query->where("kelamin_pelamar", $gender);
         })->paginate($size);
         return PelamarSimpleResource::collection($pelamar);
     }
@@ -248,4 +244,15 @@ class PelamarController extends Controller
         return new PelamarResource($pelamar);
     }
 
+    public function getAllDomisili()
+    {
+        $domisili = Pelamar::select("domisili_pelamar")
+            ->distinct()
+            ->get()
+            ->pluck("domisili_pelamar");
+
+        return response()->json([
+            "data" => $domisili
+        ]);
+    }
 }

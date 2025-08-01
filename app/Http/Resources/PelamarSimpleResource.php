@@ -19,6 +19,7 @@ class PelamarSimpleResource extends JsonResource
             "nama"=>$this->nama_pelamar,
             "email"=>$this->email_pelamar,
             "domisili"=>$this->domisili_pelamar,
+            "gender"=>$this->kelamin_pelamar,
             "profile"=>asset("/storage/".$this->profile_pelamar),
         ];
     }

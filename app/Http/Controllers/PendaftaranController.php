@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AdminPendaftaranListResource;
 use App\Http\Resources\AdminPendaftaranResource;
 use App\Http\Resources\LowonganResource;
 use App\Http\Resources\LowonganSimpleResource;
@@ -31,7 +32,30 @@ class PendaftaranController extends Controller
         }
 
         return new PendaftaranResource($pendaftaran);
+    }
 
+    public function getAll(Request $request)
+    {
+        $domisili = $request->get("domisili");
+        $size = $request->get("size", 10);
+        $gender = $request->get("gender",null);
+        $q = $request->get("q",null);
+
+        $pendaftarans = Pendaftaran::when($domisili,function($query) use ($domisili){
+            $query->whereHas("pelamar",function($query) use ($domisili){
+                $query->where("domisili_pelamar",$domisili);
+            });
+        })->when($gender,function($query) use ($gender){
+            $query->whereHas("pelamar",function($query) use ($gender){
+                $query->where("kelamin_pelamar",$gender);
+            });        })->when($q,function($query) use ($q){
+            $query->whereHas("pelamar", function ($query) use ($q){
+                $query->whereFullText(["nama_pelamar", "email_pelamar"], $q);
+            });
+        })->orderBy("created_at", "asc")->with(["pelamar","lowongan"])->paginate($size);
+
+
+        return  AdminPendaftaranListResource::collection($pendaftarans);
     }
 
     public function userPendaftaran()
@@ -51,7 +75,7 @@ class PendaftaranController extends Controller
         return new PendaftaranResource($pendaftaran);
     }
 
-    public function getAllPendaftaranByLowonganId(int $lowonganId,Request $request, )
+    public function getAllPendaftaranByLowonganId(int $lowonganId,Request $request)
     {
         $gender = $request->get('gender');
         $domisili = $request->get('domisili');
@@ -103,18 +127,10 @@ class PendaftaranController extends Controller
             ]
         ]);
     }
-    public function changeStatusToRiviewedByHrd( int $lowonganId, int $pendaftaranId )
+    public function changeStatusToRiviewedByHrd( int $pendaftaranId )
     {
 
-        $lowongan = Lowongan::find($lowonganId);
-
-        if (!$lowongan) {
-            return response()->json([
-                'message' => 'Lowongan tidak ditemukan',
-            ], 404);
-        }
-
-        $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId)->load("pelamar");
+        $pendaftaran = Pendaftaran::find($pendaftaranId)->load("pelamar");
         if (!$pendaftaran) {
             return response()->json(["message" => "pendaftaran tidak ditemukan"], 404);
         }
@@ -139,10 +155,8 @@ class PendaftaranController extends Controller
         return new AdminPendaftaranResource($pendaftaran);
     }
 
-    public function changeStatusToInterview(int $lowonganId, int $pendaftaranId )
+    public function changeStatusToInterview( int $pendaftaranId )
     {
-        $pendaftaran = null;
-        $lowongan = null;
 
         if (Auth::guard("admin_cabang")->check()) {
 
@@ -154,11 +168,8 @@ class PendaftaranController extends Controller
             }
         } elseif (Auth::guard("super_admin")->check()) {
 
-            $lowongan = Lowongan::find($lowonganId);
+            $pendaftaran = Pendaftaran::find($pendaftaranId);
 
-            if ($lowongan) {
-                $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId);
-            }
         }
 
 
@@ -188,26 +199,18 @@ class PendaftaranController extends Controller
 
     }
 
-    public function changeStatusToAccepted(int $lowonganId, int $pendaftaranId )
+    public function changeStatusToAccepted( int $pendaftaranId )
     {
         $pendaftaran = null;
-        $lowongan = null;
 
         if (Auth::guard("admin_cabang")->check()) {
 
             $adminCabang = auth("admin_cabang")->user();
             $pendaftaran = $adminCabang->cabang->pendaftarans()->find($pendaftaranId);
 
-            if ($pendaftaran) {
-                $lowongan = $pendaftaran->lowongan; // Asumsi relasi lowongan ada di model Pendaftaran
-            }
+
         } elseif (Auth::guard("super_admin")->check()) {
-
-            $lowongan = Lowongan::find($lowonganId);
-
-            if ($lowongan) {
-                $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId);
-            }
+            $pendaftaran = Pendaftaran::find($pendaftaranId);
         }
 
         if (!$pendaftaran) {
@@ -235,26 +238,19 @@ class PendaftaranController extends Controller
         return new AdminPendaftaranResource($pendaftaran);
     }
 
-    public function changeStatusToReject(int $lowonganId, int $pendaftaranId )
+    public function changeStatusToReject( int $pendaftaranId )
     {
         $pendaftaran = null;
-        $lowongan = null;
 
         if (Auth::guard("admin_cabang")->check()) {
 
             $adminCabang = auth("admin_cabang")->user();
             $pendaftaran = $adminCabang->cabang->pendaftarans()->find($pendaftaranId);
 
-            if ($pendaftaran) {
-                $lowongan = $pendaftaran->lowongan; // Asumsi relasi lowongan ada di model Pendaftaran
-            }
         } elseif (Auth::guard("super_admin")->check()) {
 
-            $lowongan = Lowongan::find($lowonganId);
+            $pendaftaran = Pendaftaran::find($pendaftaranId);
 
-            if ($lowongan) {
-                $pendaftaran = $lowongan->pendaftarans()->find($pendaftaranId);
-            }
         }
 
         if (!$pendaftaran) {
@@ -280,6 +276,30 @@ class PendaftaranController extends Controller
         ]);
 
         return new AdminPendaftaranResource($pendaftaran);
+    }
+
+    public function getByCabang(Request $request)
+    {
+        $cabang = auth("admin_cabang")->user()->cabang;
+        $domisili = $request->get("domisili");
+        $size = $request->get("size", 10);
+        $gender = $request->get("gender",null);
+        $q = $request->get("q",null);
+
+        $pendaftarans = Pendaftaran::when($domisili,function($query) use ($domisili){
+            $query->whereHas("pelamar",function($query) use ($domisili){
+                $query->where("domisili_pelamar",$domisili);
+            });
+        })->when($gender,function($query) use ($gender){
+            $query->whereHas("pelamar",function($query) use ($gender){
+                $query->where("kelamin_pelamar",$gender);
+            });        })->when($q,function($query) use ($q){
+            $query->whereHas("pelamar", function ($query) use ($q){
+                $query->whereFullText(["nama_pelamar", "email_pelamar"], $q);
+            });
+        })->where("pendaftarans.cabang_id", $cabang->id_cabang)->orderBy("created_at", "asc")->with(["pelamar","lowongan"])->paginate($size);
+
+        return AdminPendaftaranListResource::collection($pendaftarans);
     }
 
     public function superAdminGetPendaftaranByLowonganId(int $lowonganId,Request $request){
