@@ -23,6 +23,7 @@ class AdminCabangUpdateRequest extends FormRequest
     {
         return [
             "nama"=>"required|string|max:255",
+            "password"=>["nullable", "string", "min:8", "max:255"],
             "telp"=>["required", "string", "max:255","regex:/^(\+62|62|0)8[1-9][0-9]{6,10}$/"],
         ];
     }

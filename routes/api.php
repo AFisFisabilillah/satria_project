@@ -38,6 +38,8 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/profile", [SuperAdminController::class, "profile"]);
     Route::get("/super-admin/logout", [SuperAdminController::class, "logout"]);
 
+//    Super admin
+
 //    Cabang
     Route::post("/cabang", [CabangController::class, "create"]);
     Route::get("/cabang", [CabangController::class, "getCabang"]);
@@ -62,6 +64,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
     Route::get("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
     Route::patch("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "changePassword"]);
+    Route::get("/super-admin/pelamar/{pelamarId}/pendaftaran",[PelamarController::class, "getAllPendaftaranByUser"]);
     Route::patch("/super-admin/pelamar/{pelamarId}/reject",[PendaftaranController::class, "changeStatusToReject"]);
 
 //    Admin direktur
@@ -75,21 +78,30 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
     Route::patch("/super-admin/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
 
+     Route::post("/super-admin", [SuperAdminController::class, "create"]);
+    Route::put("/super-admin/{superAdminId}", [SuperAdminController::class, "update"]);
+    Route::delete("/super-admin/{superAdminId}", [SuperAdminController::class, "delete"]);
+    Route::get("/super-admin", [SuperAdminController::class, "getAll"]);
+    Route::get("/super-admin/{superAdminId}", [SuperAdminController::class, "getById"]);
+
 });
 
 //Admin Cabang
 Route::post("/admin-cabang/login", [AdminCabangController::class, "login"]);
 Route::middleware(['auth:admin_cabang'])->group(function () {
+    Route::get("/admin-cabang/dashboard", [SuperAdminController::class, "dashboard"]);
     Route::get("/admin-cabang/profile", [AdminCabangController::class, "profile"]);
     Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
 
 //    Pendaftaran
+    Route::get("/admin-cabang/pendaftaran/{pendaftaranId}/follow-up",[PendaftaranController::class, "followup" ] );
     Route::get("/admin-cabang/lowongan/{lowonganId}/pendaftaran",[\App\Http\Controllers\PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
     Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
     Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/interview",[PendaftaranController::class, "changeStatusToInterview"]);
     Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/accepted",[PendaftaranController::class, "changeStatusToAccepted"]);
     Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
     Route::get("/admin-cabang/pendaftaran/cabang",[PendaftaranController::class, "getByCabang"]);
+    Route::get("/admin-cabang/pendaftaran", [PendaftaranController::class, "getAllPendaftaran"]);
 });
 
 Route::middleware("auth:admin_direktur")->group(function () {

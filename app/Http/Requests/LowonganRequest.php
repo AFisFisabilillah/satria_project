@@ -30,6 +30,8 @@ class LowonganRequest extends FormRequest
             "min_gaji"=>"required|int|min:0",
             "max_gaji"=>"required|int|gt:min_gaji",
             "currency"=>"required|string",
+            "jumlah_laki"=>"nullable|int|min:0",
+            "jumlah_perempuan"=>"nullable|int|min:0",
             "kuota_lowongan"=>"required|int",
             "sip2mi"=>"required|string",
             "batas_waktu"=>"required|date|date_format:Y-m-d",

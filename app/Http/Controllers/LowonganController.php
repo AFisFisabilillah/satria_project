@@ -27,36 +27,46 @@ class LowonganController extends Controller
             "min_gaji_lowongan" => $data["min_gaji"],
             "negara_lowongan" => $data["negara"],
             "currency" => $data["currency"],
+            "jumlah_laki" => $data["jumlah_laki"] ?? 0,
+            "jumlah_perempuan" => $data["jumlah_perempuan"] ?? 0,
             "kuota_lowongan" => $data["kuota_lowongan"],
             "sip2mi" => $data["sip2mi"],
             "batas_waktu" => $data["batas_waktu"],
         ]);
 
         return new LowonganResource($lowongan);
-
     }
 
     public function getLowonganById(int $lowonganId)
     {
-        $lowongan =Lowongan::find($lowonganId);
+        $lowongan = Lowongan::withCount('pendaftarans')->find($lowonganId);
         if (!$lowongan) {
             return response()->json(["message" => "Lowongan tidak ditemukan"], 404);
         }
-//        Cek apakah user sudah login aau belum
+
         $user = auth("pelamar")->user();
         $sudahMelamar = false;
         if ($user) {
             $sudahMelamar = $user->pendaftarans->where("lowongan_id", $lowonganId)->isNotEmpty();
         }
-        return new LowonganPelamarResource($lowongan, ["sudah_melamar"=>$sudahMelamar]);
+
+        // Hitung sisa kuota
+        $sisaKuota = $lowongan->kuota_lowongan - $lowongan->pendaftarans_count;
+
+        return (new LowonganPelamarResource($lowongan))
+            ->additional([
+                "sudah_melamar" => $sudahMelamar,
+                "sisa_kuota" => max($sisaKuota, 0)
+            ]);
     }
 
     public function update(LowonganRequest $request, int $lowonganId)
     {
+
         $data = $request->validated();
         $lowongan = DB::transaction(function () use ($lowonganId, $data) {
 
-            $lowongan =Lowongan::find($lowonganId);
+            $lowongan = Lowongan::find($lowonganId);
 
             if (!$lowongan) {
                 return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
@@ -70,6 +80,8 @@ class LowonganController extends Controller
             $lowongan->min_gaji_lowongan = $data["min_gaji"];
             $lowongan->batas_waktu = $data["batas_waktu"];
             $lowongan->negara_lowongan = $data["negara"];
+            $lowongan->jumlah_laki = $data["jumlah_laki"] ?? 0;
+            $lowongan->jumlah_perempuan = $data["jumlah_perempuan"] ?? 0;
             $lowongan->currency = $data["currency"];
             $lowongan->kuota_lowongan = $data["kuota_lowongan"];
             $lowongan->sip2mi = $data["sip2mi"];
@@ -104,22 +116,32 @@ class LowonganController extends Controller
     }
 
 
-//    Unutk user
+    //    Unutk user
     function searchLowongan(Request $request)
     {
         $q = $request->get("q");
         $negara = $request->get("negara");
-        $posisi = $request->get("posisi",null);
+        $posisi = $request->get("posisi", null);
         $maximum = $request->get("maximum");
         $minimum = $request->get("minimum");
-        $size = $request->get("size",10);
+        $size = $request->get("size", 10);
 
         $lowongans = DB::table('lowongans')
-            ->when($q, fn($query) =>
-            $query->whereFullText(['nama_lowongan', 'deskripsi_lowongan', 'posisi_lowongan'], $q)
+            ->leftJoin('pendaftarans', 'lowongans.id_lowongan', '=', 'pendaftarans.lowongan_id')
+            ->select(
+                'lowongans.*',
+                DB::raw('COUNT(pendaftarans.id_pendaftaran) as jumlah_pendaftar'),
+                DB::raw('(lowongans.kuota_lowongan - COUNT(pendaftarans.id_pendaftaran)) as sisa_kuota')
             )
-            ->when($negara, fn($query) =>
-            $query->where('negara_lowongan', $negara)
+            ->when(
+                $q,
+                fn($query) =>
+                $query->whereFullText(['nama_lowongan', 'deskripsi_lowongan', 'posisi_lowongan'], $q)
+            )
+            ->when(
+                $negara,
+                fn($query) =>
+                $query->where('negara_lowongan', $negara)
             )
             ->when($minimum !== null && $maximum !== null, function ($query) use ($minimum, $maximum) {
                 $query->where('min_gaji_lowongan', '<=', $maximum)
@@ -133,8 +155,13 @@ class LowonganController extends Controller
             })
             ->when($posisi, function ($query) use ($posisi) {
                 $query->where('posisi_lowongan', 'like', "%$posisi%");
-            })->orderBy("kuota_lowongan", "desc")->whereNull('deleted_at')
+            })
+            ->whereNull('lowongans.deleted_at')
+            ->groupBy('lowongans.id_lowongan') // wajib saat pakai COUNT
+            ->orderBy("lowongans.created_at", "desc")
             ->paginate($size);
+
+
         return LowonganSimpleResource::collection($lowongans);
     }
 
@@ -144,18 +171,19 @@ class LowonganController extends Controller
     {
         $negara = Lowongan::select("negara_lowongan")->distinct()->pluck("negara_lowongan");
         return response()->json([
-            "data"=>$negara
+            "data" => $negara
         ]);
     }
 
-    public function filterPosisi(){
+    public function filterPosisi()
+    {
         $posisi = Lowongan::select("posisi_lowongan")->distinct()->pluck("posisi_lowongan");
         return response()->json([
-            "data"=>$posisi
+            "data" => $posisi
         ]);
     }
 
-/*
+    /*
  * TODO
  * 1. Fixed delete lowongan
  * 2.

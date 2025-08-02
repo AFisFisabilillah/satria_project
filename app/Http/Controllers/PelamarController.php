@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ChangePassword;
-use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\PelamarRegisterRequest;
-use App\Http\Requests\ProfileCompleteRequest;
-use App\Http\Resources\PelamarResource;
-use App\Http\Resources\PelamarSimpleResource;
-use App\Http\Resources\PendaftaranResource;
-use App\Models\Lowongan;
-use App\Models\Pelamar;
-use App\Models\Pendaftaran;
-use App\Models\StatusHistory;
-use App\StatusPendaftaran;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Pelamar;
+use App\Models\Lowongan;
+use App\StatusPendaftaran;
+use App\Models\Pendaftaran;
+use Illuminate\Support\Str;
+use App\Models\StatusHistory;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\ChangePassword;
+use App\Http\Resources\PelamarResource;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
+use App\Http\Resources\PendaftaranResource;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\PelamarRegisterRequest;
+use App\Http\Requests\ProfileCompleteRequest;
+use App\Http\Resources\PelamarSimpleResource;
+use App\Http\Resources\PendaftaranListResource;
 
 class PelamarController extends Controller
 {
@@ -255,4 +256,14 @@ class PelamarController extends Controller
             "data" => $domisili
         ]);
     }
+
+    function getAllPendaftaranByUser(int $pelamarId){
+        $pendaftaran = Pendaftaran::where("pelamar_id", $pelamarId)
+            ->with(["lowongan"])
+            ->orderBy("waktu_pendaftaran", "desc")
+            ->get();
+
+        return PendaftaranListResource::collection($pendaftaran);
+
+        }
 }

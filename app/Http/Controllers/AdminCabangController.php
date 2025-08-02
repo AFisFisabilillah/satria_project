@@ -56,6 +56,10 @@ class AdminCabangController extends Controller
             return response()->json(["message" => "Admmin Cabang Tidak Ditemukan"], 404);
         }
 
+         if (!empty($data['password'])) {
+            $adminCabang->password_ac = Hash::make($data['password']);
+        }
+
 
 
         $adminCabang->nama_ac = $data['nama'];

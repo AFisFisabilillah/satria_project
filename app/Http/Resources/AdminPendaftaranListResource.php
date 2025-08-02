@@ -31,8 +31,11 @@ class AdminPendaftaranListResource extends JsonResource
                 "nama"=>$this->lowongan->nama_lowongan,
                 "negara"=>$this->lowongan->negara_lowongan,
             ],
+    
             "submited_at"=>Carbon::parse($this->created_at)->format("d M Y"),
             "status"=>$this->status_pendaftaran->value,
+            "followup"=>!is_null($this->cabang_id),
+
         ];
     }
 }
