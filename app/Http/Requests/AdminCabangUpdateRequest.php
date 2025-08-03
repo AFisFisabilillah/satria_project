@@ -24,6 +24,7 @@ class AdminCabangUpdateRequest extends FormRequest
         return [
             "nama"=>"required|string|max:255",
             "password"=>["nullable", "string", "min:8", "max:255"],
+            "profile" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048",
             "telp"=>["required", "string", "max:255","regex:/^(\+62|62|0)8[1-9][0-9]{6,10}$/"],
         ];
     }

@@ -25,6 +25,7 @@ class AdminCabangRequest extends FormRequest
             "nama"=>"required|string|max:255",
             "email"=>"required|string|email|max:255|unique:admin_cabangs,email_ac",
             "telp"=>["required", "string", "max:255","regex:/^(\+62|62|0)8[1-9][0-9]{6,10}$/"],
+            "profile" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048",
             "password"=>"required|string|min:8",
         ];
     }

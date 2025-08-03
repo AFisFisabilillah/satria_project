@@ -39,7 +39,7 @@ class AdminCabang extends Model
 {
     use HasApiTokens, Notifiable, SoftDeletes;
 
-    protected $fillable = ["cabang_id","nama_ac", "telp_ac", "email_ac","password_ac"];
+    protected $fillable = ["cabang_id","nama_ac", "telp_ac", "email_ac","password_ac", "photo_profile"];
 
     public function cabang(): BelongsTo
     {
@@ -47,5 +47,15 @@ class AdminCabang extends Model
     }
 
 
+     public function sentMessages()
+    {
+        return $this->morphMany(Message::class, 'sender');
+    }
+
+    // Pesan yang diterima oleh pelamar
+    public function receivedMessages()
+    {
+        return $this->morphMany(Message::class, 'receiver');
+    }
 
 }

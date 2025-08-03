@@ -11,7 +11,7 @@ enum StatusPendaftaran: string
     case Rejected = 'rejected'; // Ditolak
 
     public function label(): string
-    {
+    { 
         return match ($this) {
             self::Submitted => 'Lamaran dikirim',
             self::ReviewedByHR => 'Diperiksa oleh HRD',

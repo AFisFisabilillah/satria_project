@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\AdminCabangController;
-use App\Http\Controllers\AdminDirekturController;
-use App\Http\Controllers\CabangController;
-use App\Http\Controllers\LowonganController;
-use App\Http\Controllers\PelamarController;
-use App\Http\Controllers\PendaftaranController;
-use App\Http\Controllers\SuperAdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CabangController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PelamarController;
+use App\Http\Controllers\LowonganController;
+use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\AdminCabangController;
+use App\Http\Controllers\PendaftaranController;
+use App\Http\Controllers\AdminDirekturController;
 
 Route::post("/pelamar/register", [PelamarController::class, "register"]);
 Route::post("/pelamar/login", [PelamarController::class, "login"]);
@@ -37,6 +38,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/dashboard", [SuperAdminController::class, "dashboard"]);
     Route::get("/super-admin/profile", [SuperAdminController::class, "profile"]);
     Route::get("/super-admin/logout", [SuperAdminController::class, "logout"]);
+    Route::post("/super-admin/update-profile", [SuperAdminController::class, "update_profile"]);
 
 //    Super admin
 
@@ -50,7 +52,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
 //    Admin Cabang
     Route::post("/cabang/{cabangId}/admin-cabang", [AdminCabangController::class, "create"]);
     Route::get("/cabang/{cabangId}/admin-cabang", [AdminCabangController::class, "getAllAdminCabangs"]);
-    Route::put("/cabang/{cabangId}/admin-cabang/{adminCabangId}", [AdminCabangController::class, "update"]);
+    Route::post("/cabang/{cabangId}/admin-cabang/{adminCabangId}", [AdminCabangController::class, "update"]);
     Route::delete("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "delete"]);
     Route::get("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "getByid"]);
 
@@ -79,7 +81,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::patch("/super-admin/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
 
      Route::post("/super-admin", [SuperAdminController::class, "create"]);
-    Route::put("/super-admin/{superAdminId}", [SuperAdminController::class, "update"]);
+    Route::post("/super-admin/{superAdminId}", [SuperAdminController::class, "update"]);
     Route::delete("/super-admin/{superAdminId}", [SuperAdminController::class, "delete"]);
     Route::get("/super-admin", [SuperAdminController::class, "getAll"]);
     Route::get("/super-admin/{superAdminId}", [SuperAdminController::class, "getById"]);
@@ -92,6 +94,7 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::get("/admin-cabang/dashboard", [SuperAdminController::class, "dashboard"]);
     Route::get("/admin-cabang/profile", [AdminCabangController::class, "profile"]);
     Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
+    Route::post("/admin-cabang/update-profile", [AdminCabangController::class, "update_profile"]);
 
 //    Pendaftaran
     Route::get("/admin-cabang/pendaftaran/{pendaftaranId}/follow-up",[PendaftaranController::class, "followup" ] );
@@ -111,3 +114,17 @@ Route::middleware("auth:admin_direktur")->group(function () {
 Route::post("/admin-direktur/login", [AdminDirekturController::class, "login"]);
 
 
+Route::middleware('auth:sanctum')->group(function () {
+    // Rute untuk Pelamar
+    Route::post('/pelamar/send-to-admin-cabang', [MessageController::class, 'sendToAdminCabang']);
+    Route::post('/pelamar/send-to-super-admin', [MessageController::class, 'sendToSuperAdmin']);
+    
+    // Rute untuk Admin Cabang
+    Route::post('/admin-cabang/send-to-pelamar', [MessageController::class, 'sendToPelamarFromAdminCabang']);
+    
+    // Rute untuk Super Admin (bisa mengirim ke semua)
+    Route::post('/super-admin/send-to-pelamar', [MessageController::class, 'sendToPelamarFromSuperAdmin']);
+    
+    // Rute untuk mengambil pesan (tetap sama)
+    Route::get('/messages', [MessageController::class, 'index']);
+});

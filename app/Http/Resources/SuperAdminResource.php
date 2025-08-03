@@ -17,7 +17,8 @@ class SuperAdminResource extends JsonResource
         return [
             "id"=>$this->id,
             "nama"=>$this->name_super_admin,
-            "email"=>$this->email_super_admin
+            "email"=>$this->email_super_admin,
+            "profile"=>asset("storage/" . $this->photo_profile),
         ];
     }
 }

@@ -60,4 +60,15 @@ class Pelamar extends Model
     {
        return $this->hasMany(Pendaftaran::class, "pelamar_id",'id_pelamar' );
     }
+
+     public function sentMessages()
+    {
+        return $this->morphMany(Message::class, 'sender');
+    }
+
+    // Pesan yang diterima oleh pelamar
+    public function receivedMessages()
+    {
+        return $this->morphMany(Message::class, 'receiver');
+    }
 }

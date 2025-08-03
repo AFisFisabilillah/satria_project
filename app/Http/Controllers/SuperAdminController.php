@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginSuperAdminRequest;
-use App\Http\Resources\SuperAdminResource;
-use App\Models\Pendaftaran;
 use App\Models\SuperAdmin;
+use App\Models\Pendaftaran;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\SuperAdminResource;
+use App\Http\Requests\LoginSuperAdminRequest;
 
 class SuperAdminController extends Controller
 {
@@ -48,6 +50,42 @@ class SuperAdminController extends Controller
         ]);
     }
 
+    public function update_profile(Request $request){
+        $data = $request->validate([
+            'nama' => 'required|string|max:255',
+            "password" => "nullable|string|min:8",
+            "profile" => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $superAdmin = auth('super_admin')->user();
+
+        if (!$superAdmin) {
+            return response()->json(["message" => "super_admin not found"], 404);
+        }
+
+         $profile = $request->file("profile");
+        if ($profile) {
+            // generate nama file unik
+            $profileName = Str::uuid()->toString() . '.' . $profile->getClientOriginalExtension();
+            $profilePath = $profile->storeAs('profiles', $profileName, 'public');
+            $data['profile'] = $profilePath;
+
+            // hapus file lama jika ada
+            if ($superAdmin->photo_profile && Storage::disk('public')->exists($superAdmin->photo_profile)) {
+                Storage::disk('public')->delete($superAdmin->photo_profile);
+            }
+
+            $superAdmin->photo_profile = $data['profile'];
+        }
+
+        if (!empty($data['password'])) {
+            $superAdmin->password_super_admin = Hash::make($data['password']);
+        }
+        $superAdmin->name_super_admin = $data['nama'];
+        $superAdmin->save();
+        return new SuperAdminResource($superAdmin);
+    }
+
     public function profile()
     {
         $superAdmin = auth('super_admin')->user();
@@ -55,7 +93,8 @@ class SuperAdminController extends Controller
         return response()->json([
             "data" => [
                 "nama" => $superAdmin->name_super_admin,
-                "email" => $superAdmin->email_super_admin
+                "email" => $superAdmin->email_super_admin,
+                "profile"=>asset("storage/".$superAdmin->photo_profile)
             ],
         ]);
     }
@@ -80,7 +119,7 @@ class SuperAdminController extends Controller
         ]);
     }
 
-    
+
 
     public function create(Request $request)
     {
@@ -88,12 +127,23 @@ class SuperAdminController extends Controller
             'nama' => 'required|string|max:255',
             "email" => 'required|string|email|max:255|unique:super_admins,email_super_admin',
             "password" => 'required|string|min:8',
+            "profile" => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        $profile = $request->file('profile');
+        if ($profile) {
+            $filename = Str::uuid()->toString() . '.' . $profile->getClientOriginalExtension();
+            $path = $profile->storeAs('profiles', $filename, 'public');
+            $data['photo_profile'] = $path;
+        } else {
+            $data['photo_profile'] = null;
+        }
 
         $superAdmin = SuperAdmin::create([
             "name_super_admin" => $data['nama'],
             "email_super_admin" => $data['email'],
-            "password_super_admin" => Hash::make($data['password'])
+            "password_super_admin" => Hash::make($data['password']),
+            "photo_profile" => $data['photo_profile'] ?? null,
         ]);
 
         return new SuperAdminResource($superAdmin);
@@ -104,18 +154,28 @@ class SuperAdminController extends Controller
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             "password" => "nullable|string|min:8",
+            "profile" => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
-        if ($superAdminId == 1) {
-            return response()->json([
-                "message" => "super admin default tidak boleh di hapus"
-            ], 400);
-        }
 
         $superAdmin = SuperAdmin::find($superAdminId);
 
         if (!$superAdmin) {
             return response()->json(["message" => "super_admin not found"], 404);
+        }
+
+         $profile = $request->file("profile");
+        if ($profile) {
+            // generate nama file unik
+            $profileName = Str::uuid()->toString() . '.' . $profile->getClientOriginalExtension();
+            $profilePath = $profile->storeAs('profiles', $profileName, 'public');
+            $data['profile'] = $profilePath;
+
+            // hapus file lama jika ada
+            if ($superAdmin->photo_profile && Storage::disk('public')->exists($superAdmin->photo_profile)) {
+                Storage::disk('public')->delete($superAdmin->photo_profile);
+            }
+
+            $superAdmin->photo_profile = $data['profile'];
         }
 
         if (!empty($data['password'])) {

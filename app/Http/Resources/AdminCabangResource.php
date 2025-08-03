@@ -19,6 +19,7 @@ class AdminCabangResource extends JsonResource
             "nama"=>$this->nama_ac,
             "email"=>$this->email_ac,
             "telp"=>$this->telp_ac,
+            "profile" => asset("storage/" . $this->photo_profile),
             "cabang"=>[
                 "id" => $this->cabang->id_cabang,
                 "nama"=>$this->cabang->nama_cabang,

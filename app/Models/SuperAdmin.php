@@ -31,5 +31,15 @@ class SuperAdmin extends Model
 {
     use HasFactory, HasApiTokens,SoftDeletes;
 
-    protected $fillable = ["name_super_admin", "email_super_admin", "password_super_admin"];
+    protected $fillable = ["name_super_admin","photo_profile", "email_super_admin", "password_super_admin"];
+     public function sentMessages()
+    {
+        return $this->morphMany(Message::class, 'sender');
+    }
+
+    // Pesan yang diterima oleh pelamar
+    public function receivedMessages()
+    {
+        return $this->morphMany(Message::class, 'receiver');
+    }
 }
