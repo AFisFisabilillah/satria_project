@@ -15,6 +15,7 @@ class PelamarResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id"=> $this->id_pelamar,
             "name"=>$this->nama_pelamar,
             "email"=>$this->email_pelamar,
             "telp"=>$this->telp_pelamar,

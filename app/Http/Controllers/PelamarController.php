@@ -219,8 +219,25 @@ class PelamarController extends Controller
             $query->where("domisili_pelamar", "$domisili");
         })->when($gender, function (Builder $query) use ($gender) {
             $query->where("kelamin_pelamar", $gender);
-        })->paginate($size);
+        })->orderBy("created_at", "desc")->paginate($size);
         return PelamarSimpleResource::collection($pelamar);
+    }
+
+    public function superAdminGetAllPelamarExport(){
+         $size = Request::get("size", 10);
+        $q = Request::get("q", null);
+        $domisili = Request::get("domisili", null);
+        $gender = Request::get("gender", null);
+
+
+        $pelamar = Pelamar::when($q, function ($query) use ($q) {
+            $query->whereFullText(["nama_pelamar", "email_pelamar"], $q);
+        })->when($domisili, function ($query) use ($domisili) {
+            $query->where("domisili_pelamar", "$domisili");
+        })->when($gender, function (Builder $query) use ($gender) {
+            $query->where("kelamin_pelamar", $gender);
+        })->orderBy("created_at", "desc")->paginate($size);
+        return PelamarResource::collection($pelamar);
     }
 
     public function superAdminGetDetailPelamar(int $pelamarId)

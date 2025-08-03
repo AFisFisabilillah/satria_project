@@ -103,7 +103,6 @@ class PendaftaranController extends Controller
                 if ($q) {
                     $query->whereFullText(['nama_pelamar', 'email_pelamar'], $q);
                 }
-                $query->whereNull('cabang_id');
             })
             ->with(['pelamar'])
             ->paginate($request->get('size', 10));

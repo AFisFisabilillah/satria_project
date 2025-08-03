@@ -64,6 +64,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
 
     Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
+    Route::get("/super-admin/pelamar/export",[PelamarController::class, "superAdminGetAllPelamarExport"]);
     Route::get("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
     Route::patch("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "changePassword"]);
     Route::get("/super-admin/pelamar/{pelamarId}/pendaftaran",[PelamarController::class, "getAllPendaftaranByUser"]);
@@ -118,13 +119,22 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rute untuk Pelamar
     Route::post('/pelamar/send-to-admin-cabang', [MessageController::class, 'sendToAdminCabang']);
     Route::post('/pelamar/send-to-super-admin', [MessageController::class, 'sendToSuperAdmin']);
-    
+
     // Rute untuk Admin Cabang
     Route::post('/admin-cabang/send-to-pelamar', [MessageController::class, 'sendToPelamarFromAdminCabang']);
-    
+
     // Rute untuk Super Admin (bisa mengirim ke semua)
     Route::post('/super-admin/send-to-pelamar', [MessageController::class, 'sendToPelamarFromSuperAdmin']);
-    
+
     // Rute untuk mengambil pesan (tetap sama)
     Route::get('/messages', [MessageController::class, 'index']);
+
+
+    Route::get('/admin-cabang/chat-pelamars', [MessageController::class, 'getChatPelamarsForAdminCabang']);
+
+    // Rute untuk Super Admin mengambil daftar pelamar yang pernah chat dengan mereka
+    Route::get('/super-admin/chat-pelamars', [MessageController::class, 'getChatPelamarsForSuperAdmin']);
+
+    // Tambahkan rute ini untuk mengambil riwayat pesan spesifik
+    Route::get('/messages/chat/{pelamarId}', [MessageController::class, 'getConversationWithPelamar']);
 });
