@@ -22,6 +22,7 @@ class ProfileCompleteRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "nama" => "required|string|max:255",
             "tanggal_lahir" => "required|date|date_format:Y-m-d|before:today",
             "jenis_kelamin" => "required|in:Laki-laki,Perempuan",
             "status_nikah" => "required|boolean",

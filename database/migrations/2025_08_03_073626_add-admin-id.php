@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pendaftarans', function (Blueprint $table) {
-            
+             $table->unsignedBigInteger('riviewed_by_id')->nullable();
+             $table->string('riviewed_by_type')->nullable(); 
         });
     }
 
@@ -21,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('pendaftarans', function (Blueprint $table) {
+             $table->dropColumn('riviewed_by_id');
+             $table->dropColumn('riviewed_by_type'); 
+        });
     }
 };

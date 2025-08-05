@@ -50,7 +50,8 @@ class SuperAdminController extends Controller
         ]);
     }
 
-    public function update_profile(Request $request){
+    public function update_profile(Request $request)
+    {
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             "password" => "nullable|string|min:8",
@@ -63,7 +64,7 @@ class SuperAdminController extends Controller
             return response()->json(["message" => "super_admin not found"], 404);
         }
 
-         $profile = $request->file("profile");
+        $profile = $request->file("profile");
         if ($profile) {
             // generate nama file unik
             $profileName = Str::uuid()->toString() . '.' . $profile->getClientOriginalExtension();
@@ -94,18 +95,38 @@ class SuperAdminController extends Controller
             "data" => [
                 "nama" => $superAdmin->name_super_admin,
                 "email" => $superAdmin->email_super_admin,
-                "profile"=>asset("storage/".$superAdmin->photo_profile)
+                "profile" => asset("storage/" . $superAdmin->photo_profile)
             ],
         ]);
     }
 
     public function dashboard()
     {
-        $data = DB::table('pelamars')->select(DB::raw('kelamin_pelamar as name'), DB::raw('count(*) as value'))->groupBy('name')->get();
-        $countLowongan = DB::table('lowongans')->count();
-        $countPendaftar = DB::table('pendaftarans')->count();
-        $countPelamar = DB::table('pelamars')->count();
-        $domisili = DB::table('pelamars')->select(DB::raw('domisili_pelamar as name'), DB::raw('count(*) as jumlah'))->groupBy('name')->get();
+        $data = DB::table('pelamars')
+            ->whereNotNull('kelamin_pelamar')
+            ->whereNull('deleted_at') // hanya pelamar yang belum dihapus
+            ->select(DB::raw('kelamin_pelamar as name'), DB::raw('count(*) as value'))
+            ->groupBy('name')
+            ->get();
+
+        $countLowongan = DB::table('lowongans')
+            ->whereNotNull('deleted_at') // yang sudah dihapus
+            ->count();
+
+        $countPendaftar = DB::table('pendaftarans')
+            ->whereNull('deleted_at') // hanya pendaftar yang belum dihapus
+            ->count();
+
+        $countPelamar = DB::table('pelamars')
+            ->whereNull('deleted_at') // hanya pelamar yang belum dihapus
+            ->count();
+
+        $domisili = DB::table('pelamars')
+            ->whereNotNull('domisili_pelamar')
+            ->whereNull('deleted_at') // hanya pelamar yang belum dihapus
+            ->select(DB::raw('domisili_pelamar as name'), DB::raw('count(*) as jumlah'))
+            ->groupBy('name')
+            ->get();
 
         return response()->json([
             'status' => 'success',
@@ -163,7 +184,7 @@ class SuperAdminController extends Controller
             return response()->json(["message" => "super_admin not found"], 404);
         }
 
-         $profile = $request->file("profile");
+        $profile = $request->file("profile");
         if ($profile) {
             // generate nama file unik
             $profileName = Str::uuid()->toString() . '.' . $profile->getClientOriginalExtension();
@@ -216,7 +237,7 @@ class SuperAdminController extends Controller
         return SuperAdminResource::collection($superAdmin);
     }
 
-    public function getById( $superAdminId)
+    public function getById($superAdminId)
     {
         $superAdmin = SuperAdmin::find($superAdminId);
         if (!$superAdmin) {

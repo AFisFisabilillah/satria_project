@@ -130,7 +130,8 @@ class PendaftaranController extends Controller
         ]);
     }
 
-    public function getAllPendaftaran(Request $request){
+    public function getAllPendaftaran(Request $request)
+    {
 
 
         $domisili = $request->get("domisili");
@@ -160,10 +161,11 @@ class PendaftaranController extends Controller
         })->when($waktu, function ($query) use ($waktu) {
             $query->whereDate("waktu_pendaftaran", $waktu);
         })->when($followup, function ($query) use ($followup) {
-            if($followup === "true") {
+            if ($followup === "true") {
                 $query->whereNotNull("cabang_id");
             }
-        })->paginate($size);
+        })->orderBy('created_at', 'desc') // <-- Tambahkan ini
+            ->paginate($size);
 
         return AdminPendaftaranListResource::collection($pendaftarans);
     }
@@ -192,21 +194,33 @@ class PendaftaranController extends Controller
 
         $pendaftaran = null;
 
+
+
         if (Auth::guard("admin_cabang")->check()) {
 
             $adminCabang = auth("admin_cabang")->user();
             $pendaftaran = $adminCabang->cabang->pendaftarans()->find($pendaftaranId);
+            if (!$pendaftaran) {
+                return response()->json([
+                    "message" => "Pendaftaran tidak ditemukan"
+                ], 404);
+            }
+            $pendaftaran->riviewed_by_id = $adminCabang->id;
+            $pendaftaran->riviewed_by_type = get_class($adminCabang);
         } elseif (Auth::guard("super_admin")->check()) {
-
+            $admin_super = auth("super_admin")->user();
             $pendaftaran = Pendaftaran::find($pendaftaranId);
+            if (!$pendaftaran) {
+                return response()->json([
+                    "message" => "Pendaftaran tidak ditemukan"
+                ], 404);
+            }
+            $pendaftaran->riviewed_by_id = $admin_super->id;
+            $pendaftaran->riviewed_by_type = get_class($admin_super);
         }
 
 
-        if (!$pendaftaran) {
-            return response()->json([
-                "message" => "Pendaftaran tidak ditemukan"
-            ], 404);
-        }
+
 
 
         $pendaftaran->load("pelamar");

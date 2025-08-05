@@ -129,6 +129,7 @@ class PelamarController extends Controller
         }
 
         $pelamar->kelamin_pelamar = $data["jenis_kelamin"];
+        $pelamar->nama_pelamar = $data["nama"];
         $pelamar->status_nikah_pelamar = $data["status_nikah"];
         $pelamar->ttl_pelamar = $data["tanggal_lahir"];
         $pelamar->sudah_lengkap = true;
@@ -214,7 +215,7 @@ class PelamarController extends Controller
 
 
         $pelamar = Pelamar::when($q, function ($query) use ($q) {
-            $query->whereFullText(["nama_pelamar", "email_pelamar"], $q);
+            $query->whereLike("nama_pelamar", "%$q%");
         })->when($domisili, function ($query) use ($domisili) {
             $query->where("domisili_pelamar", "$domisili");
         })->when($gender, function (Builder $query) use ($gender) {

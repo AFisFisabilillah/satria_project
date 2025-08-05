@@ -31,7 +31,7 @@ class Pendaftaran extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ["pelamar_id", "lowongan_id", "waktu_pendaftaran", "status_pendaftaran"];
+    protected $fillable = ["pelamar_id", "lowongan_id", "waktu_pendaftaran", "status_pendaftaran", 'riviewed_by_id', 'riviewed_by_type',];
     protected  $primaryKey = "id_pendaftaran";
 
     protected $casts = [
@@ -56,5 +56,9 @@ class Pendaftaran extends Model
     public function cabang()
     {
         return $this->belongsTo(Cabang::class, "cabang_id", "id_cabang");
+    }
+
+    public function riviewed_by(){
+        return $this->morphTo();
     }
 }

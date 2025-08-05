@@ -55,6 +55,8 @@ class AdminCabangController extends Controller
         return new AdminCabangResource($adminCabang);
     
     }
+    
+
     public function create(AdminCabangRequest $request, int $cabangId)
     {
         $data = $request->validated();

@@ -31,7 +31,10 @@ class AdminPendaftaranListResource extends JsonResource
                 "nama"=>$this->lowongan->nama_lowongan,
                 "negara"=>$this->lowongan->negara_lowongan,
             ],
-    
+            "reviewed_by" => [
+                "id" => $this->riviewed_by_id,
+                "nama" => $this->riviewed_by->nama_ac ?? $this->riviewed_by->name_super_admin ?? "null" ,
+            ] ,
             "submited_at"=>Carbon::parse($this->created_at)->format("d M Y"),
             "status"=>$this->status_pendaftaran->value,
             "followup"=>!is_null($this->cabang_id),

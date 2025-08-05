@@ -35,6 +35,9 @@ Route::middleware(['auth:pelamar'])->group(function () {
 //Super ADMIN
 Route::post("/super-admin/login", [SuperAdminController::class, "login"]);
 Route::middleware(['auth:super_admin'])->group(function () {
+        Route::post('/super-admin/send-to-pelamar', [MessageController::class, 'sendToPelamarFromSuperAdmin']);
+        Route::get('/super-admin/chat-pelamars', [MessageController::class, 'getChatPelamarsForSuperAdmin']);
+
     Route::get("/super-admin/dashboard", [SuperAdminController::class, "dashboard"]);
     Route::get("/super-admin/profile", [SuperAdminController::class, "profile"]);
     Route::get("/super-admin/logout", [SuperAdminController::class, "logout"]);
@@ -79,7 +82,10 @@ Route::middleware(['auth:super_admin'])->group(function () {
 //    Lowongan
     Route::get("/super-admin/pendaftaran", [PendaftaranController::class, "getAll"]);
     Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
-    Route::patch("/super-admin/lowongan/{lowonganId}/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/interview",[PendaftaranController::class, "changeStatusToInterview"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/accepted",[PendaftaranController::class, "changeStatusToAccepted"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
 
      Route::post("/super-admin", [SuperAdminController::class, "create"]);
     Route::post("/super-admin/{superAdminId}", [SuperAdminController::class, "update"]);
@@ -124,7 +130,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/admin-cabang/send-to-pelamar', [MessageController::class, 'sendToPelamarFromAdminCabang']);
 
     // Rute untuk Super Admin (bisa mengirim ke semua)
-    Route::post('/super-admin/send-to-pelamar', [MessageController::class, 'sendToPelamarFromSuperAdmin']);
 
     // Rute untuk mengambil pesan (tetap sama)
     Route::get('/messages', [MessageController::class, 'index']);
@@ -133,8 +138,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin-cabang/chat-pelamars', [MessageController::class, 'getChatPelamarsForAdminCabang']);
 
     // Rute untuk Super Admin mengambil daftar pelamar yang pernah chat dengan mereka
-    Route::get('/super-admin/chat-pelamars', [MessageController::class, 'getChatPelamarsForSuperAdmin']);
 
     // Tambahkan rute ini untuk mengambil riwayat pesan spesifik
     Route::get('/messages/chat/{pelamarId}', [MessageController::class, 'getConversationWithPelamar']);
+
+    Route::get('/pelamar/chat-list', [MessageController::class, 'getChatListForPelamar']);
+
+    Route::get('/pelamar/chat/{partnerId}', [MessageController::class, 'getConversationWithPartner']);
+
+    Route::get('/admin/chat/{pelamarId}', [MessageController::class, 'getConversationForAdmin']);
+
 });

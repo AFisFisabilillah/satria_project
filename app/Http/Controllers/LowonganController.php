@@ -72,6 +72,8 @@ class LowonganController extends Controller
                 return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
             }
 
+            $kuotaLowongan = $data["jumlah_laki"] + $data["jumlah_perempuan"];
+
             $lowongan->nama_lowongan = $data["nama"];
             $lowongan->syarat_lowongan = $data["syarat"];
             $lowongan->deskripsi_lowongan = $data["deskripsi"];
@@ -83,7 +85,7 @@ class LowonganController extends Controller
             $lowongan->jumlah_laki = $data["jumlah_laki"] ?? 0;
             $lowongan->jumlah_perempuan = $data["jumlah_perempuan"] ?? 0;
             $lowongan->currency = $data["currency"];
-            $lowongan->kuota_lowongan = $data["kuota_lowongan"];
+            $lowongan->kuota_lowongan = $kuotaLowongan;
             $lowongan->sip2mi = $data["sip2mi"];
             $lowongan->save();
             return $lowongan;
