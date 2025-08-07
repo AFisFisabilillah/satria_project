@@ -31,6 +31,7 @@ class LowonganController extends Controller
             "jumlah_perempuan" => $data["jumlah_perempuan"] ?? 0,
             "kuota_lowongan" => $data["kuota_lowongan"],
             "sip2mi" => $data["sip2mi"],
+            "sisakuota" => $data["kuota_lowongan"], // Inisialisasi sisakuota dengan kuota_lowongan
             "batas_waktu" => $data["batas_waktu"],
         ]);
 
@@ -71,6 +72,8 @@ class LowonganController extends Controller
             if (!$lowongan) {
                 return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
             }
+
+            $sisakuota = ; // Ambil nilai sisakuota yang sudah ada
 
             $kuotaLowongan = $data["jumlah_laki"] + $data["jumlah_perempuan"];
 

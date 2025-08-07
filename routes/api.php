@@ -66,6 +66,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::put("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "update"]);
     Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
 
+    Route::post("/super-admin/pelamar/create", [PelamarController::class, "create"]);
     Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
     Route::get("/super-admin/pelamar/export",[PelamarController::class, "superAdminGetAllPelamarExport"]);
     Route::get("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
@@ -98,6 +99,12 @@ Route::middleware(['auth:super_admin'])->group(function () {
 //Admin Cabang
 Route::post("/admin-cabang/login", [AdminCabangController::class, "login"]);
 Route::middleware(['auth:admin_cabang'])->group(function () {
+    Route::get("/admin-cabang/pelamar/export",[PelamarController::class, "superAdminGetAllPelamarExport"]);
+    Route::post("/admin-cabang/pelamar/create", [PelamarController::class, "create"]);
+    Route::post("/admin-cabang/pelamar/{pelamarId}", [PelamarController::class, "update"]);
+    Route::get("/admin-cabang/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
+
+
     Route::get("/admin-cabang/dashboard", [SuperAdminController::class, "dashboard"]);
     Route::get("/admin-cabang/profile", [AdminCabangController::class, "profile"]);
     Route::get("/admin-cabang/logout", [AdminCabangController::class, "logout"]);
@@ -112,6 +119,8 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
     Route::get("/admin-cabang/pendaftaran/cabang",[PendaftaranController::class, "getByCabang"]);
     Route::get("/admin-cabang/pendaftaran", [PendaftaranController::class, "getAllPendaftaran"]);
+
+//    Pelamar
 });
 
 Route::middleware("auth:admin_direktur")->group(function () {
