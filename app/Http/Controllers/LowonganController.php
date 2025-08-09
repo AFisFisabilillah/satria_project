@@ -73,7 +73,7 @@ class LowonganController extends Controller
                 return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
             }
 
-            $sisakuota = ; // Ambil nilai sisakuota yang sudah ada
+//            $sisakuota = ; // Ambil nilai sisakuota yang sudah ada
 
             $kuotaLowongan = $data["jumlah_laki"] + $data["jumlah_perempuan"];
 
@@ -166,10 +166,8 @@ class LowonganController extends Controller
             ->orderBy("lowongans.created_at", "desc")
             ->paginate($size);
 
-
         return LowonganSimpleResource::collection($lowongans);
     }
-
 
 
     public function filterNegara()

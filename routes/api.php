@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArtikelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CabangController;
@@ -15,7 +16,7 @@ Route::post("/pelamar/register", [PelamarController::class, "register"]);
 Route::post("/pelamar/login", [PelamarController::class, "login"]);
 Route::get("/lowongan/search",[LowonganController::class, "searchLowongan"]);
 Route::get("/lowongan/{lowonganId}",[LowonganController::class, "getLowonganById"]);
-
+Route::get("/artikel", [ArtikelController::class, "getAllArtikelOnMobile"]);
 Route::get("/filter/domisili", [PelamarController::class, "getAllDomisili"]);
 Route::get("/filter/negara", [LowonganController::class, "filterNegara"]);
 Route::get("/filter/posisi", [LowonganController::class, "filterPosisi"]);
@@ -35,8 +36,14 @@ Route::middleware(['auth:pelamar'])->group(function () {
 //Super ADMIN
 Route::post("/super-admin/login", [SuperAdminController::class, "login"]);
 Route::middleware(['auth:super_admin'])->group(function () {
-        Route::post('/super-admin/send-to-pelamar', [MessageController::class, 'sendToPelamarFromSuperAdmin']);
-        Route::get('/super-admin/chat-pelamars', [MessageController::class, 'getChatPelamarsForSuperAdmin']);
+    Route::post("/super-admin/artikel/create", [ArtikelController::class, "create"]);
+    Route::get("/super-admin/artikel", [ArtikelController::class, "getAllArtikel"]);
+    Route::post("/super-admin/artikel/{artikelId}/update", [ArtikelController::class, "update"]);
+    Route::delete("/super-admin/artikel/{artikelId}", [ArtikelController::class, "delete"]);
+    Route::get("/super-admin/artikel/{artikelId}", [ArtikelController::class, "getArtikel"]);
+
+    Route::post('/super-admin/send-to-pelamar', [MessageController::class, 'sendToPelamarFromSuperAdmin']);
+    Route::get('/super-admin/chat-pelamars', [MessageController::class, 'getChatPelamarsForSuperAdmin']);
 
     Route::get("/super-admin/dashboard", [SuperAdminController::class, "dashboard"]);
     Route::get("/super-admin/profile", [SuperAdminController::class, "profile"]);
@@ -93,6 +100,9 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::delete("/super-admin/{superAdminId}", [SuperAdminController::class, "delete"]);
     Route::get("/super-admin", [SuperAdminController::class, "getAll"]);
     Route::get("/super-admin/{superAdminId}", [SuperAdminController::class, "getById"]);
+
+//    Artikel,
+
 
 });
 

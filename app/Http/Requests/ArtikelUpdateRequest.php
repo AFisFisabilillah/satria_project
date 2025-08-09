@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ArtikelRequest extends FormRequest
+class ArtikelUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,9 @@ class ArtikelRequest extends FormRequest
     {
         return [
             "judul" => "required|string",
-            "foto"=>"required|image|mimes:jpeg,png,jpg,gif,svg|max:4096",
+            "foto"=>"image|mimes:jpeg,png,jpg,gif,svg|max:4096",
+            "on_mobile"=>"required|boolean",
             "isi" => "required|string",
-            "on_mobile"=>"required|boolean|",
             "kategori" => "required|string|in:Artikel,Galeri",
         ];
     }
