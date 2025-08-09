@@ -192,10 +192,8 @@ class PelamarController extends Controller
                 "status" => StatusPendaftaran::Submitted->value,
             ]);
 
-            $lowongan->update([
-                "kuota_lowongan" => $lowongan->kuota_lowongan - 1
-            ]);
-
+            $lowongan->sisakuota -= 1;
+            $lowongan->save();
             DB::commit();
 
             //        Memasukan secara manual

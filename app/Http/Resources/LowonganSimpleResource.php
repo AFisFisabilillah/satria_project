@@ -23,7 +23,7 @@ class LowonganSimpleResource extends JsonResource
             "gaji"=>$this->currency." ".number_format($this->min_gaji_lowongan, 0, ',', '.')." - ".number_format($this->max_gaji_lowongan, 0, ',', '.'),
             "syarat"=>$this->syarat_lowongan,
             "kuota_lowongan" => $this->kuota_lowongan,
-            "sisa_kuota" => $this->sisa_kuota,
+            "sisa_kuota" => $this->sisakuota,
             "sip2mi" => $this->sip2mi,
             "posisi"=>$this->posisi_lowongan
         ];

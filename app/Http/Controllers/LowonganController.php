@@ -52,12 +52,10 @@ class LowonganController extends Controller
         }
 
         // Hitung sisa kuota
-        $sisaKuota = $lowongan->kuota_lowongan - $lowongan->pendaftarans_count;
 
         return (new LowonganPelamarResource($lowongan))
             ->additional([
                 "sudah_melamar" => $sudahMelamar,
-                "sisa_kuota" => max($sisaKuota, 0)
             ]);
     }
 
@@ -73,9 +71,10 @@ class LowonganController extends Controller
                 return response()->json(["message" => "Data lowongan tidak ditemukan"], 404);
             }
 
-//            $sisakuota = ; // Ambil nilai sisakuota yang sudah ada
+
 
             $kuotaLowongan = $data["jumlah_laki"] + $data["jumlah_perempuan"];
+            $sisakuota = $kuotaLowongan - $lowongan->kuota_lowongan ;
 
             $lowongan->nama_lowongan = $data["nama"];
             $lowongan->syarat_lowongan = $data["syarat"];
@@ -89,6 +88,7 @@ class LowonganController extends Controller
             $lowongan->jumlah_perempuan = $data["jumlah_perempuan"] ?? 0;
             $lowongan->currency = $data["currency"];
             $lowongan->kuota_lowongan = $kuotaLowongan;
+            $lowongan->sisakuota += $sisakuota;
             $lowongan->sip2mi = $data["sip2mi"];
             $lowongan->save();
             return $lowongan;
@@ -132,12 +132,6 @@ class LowonganController extends Controller
         $size = $request->get("size", 10);
 
         $lowongans = DB::table('lowongans')
-            ->leftJoin('pendaftarans', 'lowongans.id_lowongan', '=', 'pendaftarans.lowongan_id')
-            ->select(
-                'lowongans.*',
-                DB::raw('COUNT(pendaftarans.id_pendaftaran) as jumlah_pendaftar'),
-                DB::raw('(lowongans.kuota_lowongan - COUNT(pendaftarans.id_pendaftaran)) as sisa_kuota')
-            )
             ->when(
                 $q,
                 fn($query) =>

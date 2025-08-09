@@ -43,7 +43,7 @@ class Lowongan extends Model
 {
     use SoftDeletes;
     protected $primaryKey = 'id_lowongan';
-    protected $fillable = ["admin_cabang_id","jumlah_laki", "jumlah_perempuan", "nama_lowongan", "deskripsi_lowongan", "syarat_lowongan","posisi_lowongan","min_gaji_lowongan","max_gaji_lowongan", "negara_lowongan", "currency", "kuota_lowongan", "batas_waktu", "sip2mi"];
+    protected $fillable = ["admin_cabang_id","jumlah_laki", "jumlah_perempuan", "nama_lowongan", "deskripsi_lowongan", "syarat_lowongan","posisi_lowongan","min_gaji_lowongan","max_gaji_lowongan", "negara_lowongan", "currency", "kuota_lowongan", "batas_waktu", "sip2mi", "sisakuota"];
 
     public function pendaftarans(){
         return $this->hasMany(Pendaftaran::class, "lowongan_id", "id_lowongan");
