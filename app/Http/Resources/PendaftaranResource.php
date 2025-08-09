@@ -18,7 +18,11 @@ class PendaftaranResource extends JsonResource
             "id"=>$this->id_pendaftaran,
             "nama_lowongan"=>$this->lowongan->nama_lowongan,
             "waktu_pendaftaran"=>$this->waktu_pendaftaran,
-            "status_histories"=>StatusHistoryResource::collection($this->statusHistories)
+            "status_histories"=>StatusHistoryResource::collection($this->statusHistories),
+            "admin" => [
+                "id"=>$this->riviewed_by_id,
+                "type"=>$this->riviewed_by_type
+            ]
         ];
     }
 }
