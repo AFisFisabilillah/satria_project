@@ -221,8 +221,6 @@ class PendaftaranController extends Controller
 
 
 
-
-
         $pendaftaran->load("pelamar");
 
         if ($pendaftaran->status_pendaftaran->value !== StatusPendaftaran::Submitted->value) {
@@ -236,7 +234,7 @@ class PendaftaranController extends Controller
 
         StatusHistory::create([
             "pendaftaran_id" => $pendaftaran->id_pendaftaran,
-            "status" => StatusPendaftaran::Interview->value,
+            "status" => StatusPendaftaran::ReviewedByHR->value,
         ]);
         return new AdminPendaftaranResource($pendaftaran);
     }
