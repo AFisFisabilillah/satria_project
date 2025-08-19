@@ -50,6 +50,12 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::get("/super-admin/logout", [SuperAdminController::class, "logout"]);
     Route::post("/super-admin/update-profile", [SuperAdminController::class, "update_profile"]);
 
+//    Staff
+    Route::get("/super-admin/staff", [AdminCabangController::class, "getStaff"]);
+    Route::post("/super-admin/staff", [AdminCabangController::class, "createStaff"]);
+    Route::post("/super-admin/staff/{staffId}", [AdminCabangController::class, "updateStaff"]);
+    Route::delete("/super-admin/staff/{staffId}", [AdminCabangController::class, "deleteStaff"]);
+
 //    Super admin
 
 //    Cabang
@@ -76,6 +82,7 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::post("/super-admin/pelamar/create", [PelamarController::class, "create"]);
     Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
     Route::get("/super-admin/pelamar/export",[PelamarController::class, "superAdminGetAllPelamarExport"]);
+    Route::post("/admin-cabang/pelamar/{pelamarId}", [PelamarController::class, "update"]);
     Route::get("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
     Route::patch("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "changePassword"]);
     Route::get("/super-admin/pelamar/{pelamarId}/pendaftaran",[PelamarController::class, "getAllPendaftaranByUser"]);
@@ -108,10 +115,26 @@ Route::middleware(['auth:super_admin'])->group(function () {
 
 //Admin Cabang
 Route::post("/admin-cabang/login", [AdminCabangController::class, "login"]);
+Route::post("/staff/login", [AdminCabangController::class, "staffLogin"]);
 Route::middleware(['auth:admin_cabang'])->group(function () {
+    Route::get("/staff/dashboard", [SuperAdminController::class, "dashboard"])->middleware("staff");
+    Route::get("/staff/profile", [AdminCabangController::class, "profile"])->middleware("staff");
+    Route::post("/staff/updatea-profile", [AdminCabangController::class, "update_profile"])->middleware("staff");
+    Route::post("/staff/pelamar/create", [PelamarController::class, "create"])->middleware("staff");;
+    Route::get("/staff/pelamar",[PelamarController::class, "superAdminGetAllPelamar"])->middleware("staff");
+    Route::post("/staff/pelamar/{pelamarId}", [PelamarController::class, "update"])->middleware("staff");
+    Route::get("/staff/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"])->middleware("staff");
+
+    Route::post("/staff/pelamar/{pelamarId}/changePassword", [PelamarController::class, "changePassword"])->middleware("staff");
+
+
+
     Route::get("/admin-cabang/pelamar/export",[PelamarController::class, "superAdminGetAllPelamarExport"]);
     Route::post("/admin-cabang/pelamar/create", [PelamarController::class, "create"]);
+    Route::get("/admin-cabang/pelamar/{pelamarId}/pendaftaran",[PelamarController::class, "getAllPendaftaranByUser"]);
     Route::post("/admin-cabang/pelamar/{pelamarId}", [PelamarController::class, "update"]);
+    Route::get("/admin-cabang/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
+    Route::post("/admin-cabang/pelamar/{pelamarId}/changePassword", [PelamarController::class, "changePassword"]);
     Route::get("/admin-cabang/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
 
 
@@ -129,7 +152,6 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
     Route::get("/admin-cabang/pendaftaran/cabang",[PendaftaranController::class, "getByCabang"]);
     Route::get("/admin-cabang/pendaftaran", [PendaftaranController::class, "getAllPendaftaran"]);
-
 //    Pelamar
 });
 

@@ -181,13 +181,22 @@ class PendaftaranController extends Controller
             ], 404);
         }
 
-        $pendaftaran->cabang_id = $adminCabang->cabang_id;
+        if($adminCabang->type == "admin_cabang"){
+            $pendaftaran->cabang_id = $adminCabang->cabang_id;
+            $pendaftaran->riviewed_by_id = $adminCabang->id;
+            $pendaftaran->riviewed_by_type = get_class($adminCabang);
+        }else{
+            $pendaftaran->riviewed_by_id = $adminCabang->id;
+            $pendaftaran->riviewed_by_type = get_class($adminCabang);
+        }
         $pendaftaran->save();
 
         return response()->json([
             "message" => "Pendaftaran dengan id $pendaftaranId di cabang id " . $adminCabang->cabang_id
         ], 200);
     }
+
+
 
     public function changeStatusToRiviewedByHrd(int $pendaftaranId)
     {
@@ -422,5 +431,10 @@ class PendaftaranController extends Controller
                 'total' => $pendaftarans->total(),
             ]
         ]);
+    }
+
+    public function staffGetPendaftaran()
+    {
+
     }
 }

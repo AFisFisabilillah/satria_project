@@ -31,7 +31,7 @@ class Pendaftaran extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ["pelamar_id", "lowongan_id", "waktu_pendaftaran", "status_pendaftaran", 'riviewed_by_id', 'riviewed_by_type',];
+    protected $fillable = ["pelamar_id", "lowongan_id", "waktu_pendaftaran", "status_pendaftaran", 'riviewed_by_id', 'riviewed_by_type',"type_admin"];
     protected  $primaryKey = "id_pendaftaran";
 
     protected $casts = [

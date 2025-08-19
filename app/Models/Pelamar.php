@@ -52,7 +52,7 @@ class Pelamar extends Model
     use HasApiTokens, HasFactory, SoftDeletes;
 
     protected $primaryKey = "id_pelamar";
-    protected $fillable = ['nama_pelamar', 'email_pelamar', 'telp_pelamar','provinsi_pelamar','ttl_pelamar','domisili_pelamar','status_nikah_pelamar','profile_pelamar','cv_pelamar','password_pelamar', "type","admin_id", "admin_type"];
+    protected $fillable = ['nama_pelamar', 'email_pelamar', 'telp_pelamar','provinsi_pelamar','ttl_pelamar','domisili_pelamar','status_nikah_pelamar','profile_pelamar','cv_pelamar','password_pelamar', "type","admin_id", "admin_type", "ktp_pelamar", "kelamin_pelamar"];
 
     protected $guarded = ['id_pelamar'];
 
