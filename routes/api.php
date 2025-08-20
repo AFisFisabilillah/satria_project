@@ -21,6 +21,11 @@ Route::get("/filter/domisili", [PelamarController::class, "getAllDomisili"]);
 Route::get("/filter/negara", [LowonganController::class, "filterNegara"]);
 Route::get("/filter/posisi", [LowonganController::class, "filterPosisi"]);
 
+Route::post("/send-code", [\App\Http\Controllers\ResetPasswordController::class, "sendCode"]);
+Route::post("/verification-code", [\App\Http\Controllers\ResetPasswordController::class, "verifyCode"]);
+Route::post("/reset-password", [\App\Http\Controllers\ResetPasswordController::class, "resetPassword"]);
+Route::post("/resend-code", [\App\Http\Controllers\ResetPasswordController::class, "resendCode"]);
+
 Route::middleware(['auth:pelamar'])->group(function () {
    Route::get("/pelamar/profile", [PelamarController::class, "profile"]);
    Route::get("/pelamar/logout", [PelamarController::class, "logout"]);
