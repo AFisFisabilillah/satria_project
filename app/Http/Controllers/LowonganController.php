@@ -156,7 +156,6 @@ class LowonganController extends Controller
                 $query->where('posisi_lowongan', 'like', "%$posisi%");
             })
             ->whereNull('lowongans.deleted_at')
-            ->groupBy('lowongans.id_lowongan') // wajib saat pakai COUNT
             ->orderBy("lowongans.created_at", "desc")
             ->paginate($size);
 
