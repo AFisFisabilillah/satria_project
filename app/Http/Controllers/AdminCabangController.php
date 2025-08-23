@@ -18,12 +18,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class AdminCabangController extends Controller
 {
 
-    public function update_profile(AdminCabangUpdateRequest $request){
+    public function update_profile(AdminCabangUpdateRequest $request)
+    {
         $adminCabang = auth("admin_cabang")->user();
-         
-        $data =  $request->validated();
 
-    
+        $data = $request->validated();
+
+
         if (!$adminCabang) {
             return response()->json(["message" => "Admin Cabang Tidak Ditemukan"], 404);
         }
@@ -53,9 +54,9 @@ class AdminCabangController extends Controller
         $adminCabang->save();
 
         return new AdminCabangResource($adminCabang);
-    
+
     }
-    
+
 
     public function create(AdminCabangRequest $request, int $cabangId)
     {
@@ -94,7 +95,7 @@ class AdminCabangController extends Controller
 
     public function update(AdminCabangUpdateRequest $request, $cabangId, $adminCabangId)
     {
-        $data =  $request->validated();
+        $data = $request->validated();
         $cabang = Cabang::find($cabangId);
 
         if (!$cabang) {
@@ -182,17 +183,133 @@ class AdminCabangController extends Controller
             ]
         ]);
     }
+
     public function profile()
     {
         $adminCabang = auth("admin_cabang")->user();
         return new AdminCabangResource($adminCabang);
     }
+
     public function logout()
     {
         $adminCabang = auth("admin_cabang")->user();
         $adminCabang->currentAccessToken()->delete();
         return response()->json([
             "message" => "Logout berhasil"
+        ]);
+    }
+
+    private function handleFileUpload($file, $folder, $oldPathFile = "", $fileNamePrefix, $nama = "")
+    {
+        if (!empty($oldPathFile) && Storage::disk("public")->exists($oldPathFile)) {
+            Storage::disk("public")->delete($oldPathFile);
+        }
+        $newFileName = "{$fileNamePrefix}_" . Str::uuid() . "_" . Str::replace(" ", "_", $nama) . "." . $file->getClientOriginalExtension();
+        $file->storeAs($folder, $newFileName, "public");
+        return "{$folder}/{$newFileName}";
+    }
+
+    function createStaff(AdminCabangRequest $request)
+    {
+        $data = $request->validated();
+        $foto = $request->file("profile");
+        $pathFoto = null;
+        if ($foto) {
+            $pathFoto = $this->handleFileUpload($foto, "profile", "", "profile");
+            $admin = AdminCabang::create([
+                "nama_ac" => $data["nama"],
+                "email_ac" => $data["email"],
+                "telp_ac" => $data["telp"],
+                "photo_profile" => $pathFoto,
+                "password_ac" => Hash::make($data["password"]),
+                "type" => "staff"
+            ]);
+            return new AdminCabangResource($admin);
+        }
+
+        $admin = AdminCabang::create([
+            "nama_ac" => $data["nama"],
+            "email_ac" => $data["email"],
+            "telp_ac" => $data["telp"],
+            "foto_profile" => $pathFoto,
+            "password_ac" => Hash::make($data["password"]),
+            "type" => "staff"
+        ]);
+
+        return new AdminCabangResource($admin);
+    }
+
+    function getStaff()
+    {
+        $staff = AdminCabang::where("type", "staff")->get();
+        return AdminCabangResource::collection($staff);
+    }
+
+    function updateStaff(AdminCabangUpdateRequest $request, $staffId)
+    {
+        $data = $request->validated();
+        $adminCabang = AdminCabang::where(["id" => $staffId, "type" => "staff"])->first();
+        if (!$adminCabang) {
+            return response()->json(["message" => "Admin Cabang Tidak Ditemukan"], 404);
+        }
+
+        $profile = $request->file("profile");
+        if ($profile) {
+            // generate nama file unik
+            $profileName = Str::uuid()->toString() . '.' . $profile->getClientOriginalExtension();
+            $profilePath = $profile->storeAs('profiles', $profileName, 'public');
+            $data['profile'] = $profilePath;
+
+            // hapus file lama jika ada
+            if ($adminCabang->photo_profile && Storage::disk('public')->exists($adminCabang->photo_profile)) {
+                Storage::disk('public')->delete($adminCabang->photo_profile);
+            }
+
+            $adminCabang->photo_profile = $data['profile'];
+        }
+
+        if (!empty($data['password'])) {
+            $adminCabang->password_ac = Hash::make($data['password']);
+        }
+
+        $adminCabang->nama_ac = $data['nama'];
+        $adminCabang->telp_ac = $data['telp'];
+
+        $adminCabang->save();
+
+        return new AdminCabangResource($adminCabang);
+    }
+
+    function deleteStaff(int $staffId)
+    {
+        $adminCabang = AdminCabang::where(["id" => $staffId, "type" => "staff"])->first();
+        if (!$adminCabang) {
+            return response()->json(["message" => "Admin Cabang Tidak Ditemukan"], 404);
+        }
+        $adminCabang->delete();
+        return response()->json([
+            "message" => "success delete admin cabang"
+        ]);
+    }
+
+
+    public function staffLogin(AdminCabangLoginRequest $request)
+    {
+        $data = $request->validated();
+        $adminCabang = AdminCabang::where("email_ac", $data['email'])->first();
+        if (!$adminCabang || !Hash::check($data['password'], $adminCabang->password_ac)) {
+            return response()->json(["message" => "Password atau Email, Salah !"], 401);
+        }
+        if ($adminCabang->type != "staff") {
+            return response()->json(["message" => "Password atau Email, Salah !"], 401);
+        }
+        $token = $adminCabang->createToken("auth_token")->plainTextToken;
+        return response()->json([
+            "data" => [
+                "nama" => $adminCabang->nama_ac,
+                "email" => $adminCabang->email_ac,
+                "token" => $token,
+            ]
         ]);
     }
 }

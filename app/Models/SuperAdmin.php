@@ -42,4 +42,8 @@ class SuperAdmin extends Model
     {
         return $this->morphMany(Message::class, 'receiver');
     }
+
+    public function articles(){
+         return $this->hasMany(Artikel::class, "penulis", "id");
+    }
 }

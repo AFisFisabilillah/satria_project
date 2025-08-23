@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PelamarRequest;
+use App\Http\Requests\PelamarUpdateRequest;
 use Carbon\Carbon;
 use App\Models\Pelamar;
 use App\Models\Lowongan;
 use App\StatusPendaftaran;
 use App\Models\Pendaftaran;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\StatusHistory;
 use Illuminate\Session\Store;
@@ -90,7 +93,7 @@ class PelamarController extends Controller
         return new PelamarResource($pelamar);
     }
 
-    private function handleFileUpload($file, $folder, $oldPathFile, $fileNamePrefix, $nama = "")
+    private function handleFileUpload($file, $folder, $oldPathFile ="", $fileNamePrefix, $nama = "")
     {
         if (!empty($oldPathFile) && Storage::disk("public")->exists($oldPathFile)) {
             Storage::disk("public")->delete($oldPathFile);
@@ -189,10 +192,8 @@ class PelamarController extends Controller
                 "status" => StatusPendaftaran::Submitted->value,
             ]);
 
-            $lowongan->update([
-                "kuota_lowongan" => $lowongan->kuota_lowongan - 1
-            ]);
-
+            $lowongan->sisakuota -= 1;
+            $lowongan->save();
             DB::commit();
 
             //        Memasukan secara manual
@@ -220,7 +221,8 @@ class PelamarController extends Controller
             $query->where("domisili_pelamar", "$domisili");
         })->when($gender, function (Builder $query) use ($gender) {
             $query->where("kelamin_pelamar", $gender);
-        })->orderBy("created_at", "desc")->paginate($size);
+        })->orderBy("created_at", "desc")->with("admin")->paginate($size);
+
         return PelamarSimpleResource::collection($pelamar);
     }
 
@@ -283,5 +285,87 @@ class PelamarController extends Controller
 
         return PendaftaranListResource::collection($pendaftaran);
 
+    }
+    public function create(PelamarRequest $request){
+
+        $admin = auth()->user();
+        $data = $request->validated();
+
+        $profile = $this->handleFileUpload($request->file("profile"),"profile"," ", "profile", $data["nama"]);
+        $ktp = $this->handleFileUpload($request->file("ktp"),"ktp"," ", "ktp");
+
+
+        $pelamar = Pelamar::create([
+                "nama_pelamar" => $data["nama"],
+                "email_pelamar" => $data["email"],
+                "domisili_pelamar" => $data["domisili"],
+                "telp_pelamar" => $data["telp"],
+                "ttl_pelamar" => $data["tanggal_lahir"],
+                "status_nikah_pelamar" => $data["status_nikah"],
+                "kelamin_pelamar" => $data["gender"],
+                "password_pelamar" => Hash::make($data["password"]),
+                "profile_pelamar" => $profile,
+                "ktp_pelamar" => $ktp,
+                "sudah_lengkap" => true,
+                "type" => "offline",
+                "admin_id" => $admin->id,
+                "admin_type" => get_class($admin)
+        ]);
+
+        return new PelamarResource($pelamar);
+    }
+
+    public function update(PelamarUpdateRequest $request, int $pelamarId)
+    {
+        $admin = auth()->user();
+        $data = $request->validated();
+
+        $pelamar = Pelamar::find($pelamarId);
+        if (!$pelamar) {
+            return response()->json(["message" => "pelamar Not Found!"], 404);
         }
+
+        $pelamar->nama_pelamar = $data["nama"];
+        $pelamar->telp_pelamar = $data["telp"];
+        $pelamar->ttl_pelamar = $data["tanggal_lahir"];
+        $pelamar->status_nikah_pelamar = $data["status_nikah"];
+        $pelamar->kelamin_pelamar = $data["jenis_kelamin"];
+        $pelamar->domisili_pelamar = $data["domisili"];
+        $ktp = $request->file("ktp");
+        if($ktp){
+            $path = $this->handleFileUpload($ktp, "ktp", $pelamar->ktp_pelamar, "ktp", "$pelamar->nama_pelamar");
+            $pelamar->ktp_pelamar = $path;
+        }
+
+        $profile = $request->file("profile");
+        if($profile){
+            $path = $this->handleFileUpload($profile, "profile", $pelamar->profile_pelamar, "profile", "$pelamar->nama_pelamar" );
+            $pelamar->profile_pelamar = $path;
+        }
+
+        $pelamar->save();
+
+        return new PelamarResource($pelamar);
+    }
+
+    public function delete(int $pelamarId){
+        $pelamar = Pelamar::find($pelamarId);
+        if (!$pelamar) {
+            return response()->json(["message" => "pelamar Not Found!"], 404);
+        }
+
+        if ($pelamar->ktp_pelamar && Storage::disk('public')->exists($pelamar->ktp_pelamar)) {
+            Storage::disk('public')->delete($pelamar->ktp_pelamar);
+        }
+
+        if ($pelamar->profile_pelamar && Storage::disk('public')->exists($pelamar->profile_pelamar)) {
+            Storage::disk('public')->delete($pelamar->profile_pelamar);
+        }
+
+        $pelamar->delete();
+
+        return response()->json(["message" => "Pelamar deleted successfully"]);
+    }
+
+
 }

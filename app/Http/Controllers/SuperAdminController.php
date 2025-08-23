@@ -110,7 +110,7 @@ class SuperAdminController extends Controller
             ->get();
 
         $countLowongan = DB::table('lowongans')
-            ->whereNotNull('deleted_at') // yang sudah dihapus
+            ->whereNull('deleted_at') // yang sudah dihapus
             ->count();
 
         $countPendaftar = DB::table('pendaftarans')

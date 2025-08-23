@@ -22,6 +22,7 @@ class AdminPendaftaranResource extends JsonResource
                 "profile"=>asset("/storage/".$this->pelamar->profile_pelamar),
                 "nama"=>$this->pelamar->nama_pelamar,
                 "email"=>$this->pelamar->email_pelamar,
+                "telp"=>$this->pelamar->telp_pelamar,
                 "gender"=>$this->pelamar->kelamin_pelamar,
                 "domisili"=>$this->pelamar->domisili_pelamar,
                 "umur"=>Carbon::parse($this->pelamar->ttl_pelamar)->age

@@ -20,7 +20,7 @@ class AdminCabangResource extends JsonResource
             "email"=>$this->email_ac,
             "telp"=>$this->telp_ac,
             "profile" => asset("storage/" . $this->photo_profile),
-            "cabang"=>[
+            "cabang"=>$this->cabang == null ? null : [
                 "id" => $this->cabang->id_cabang,
                 "nama"=>$this->cabang->nama_cabang,
             ],

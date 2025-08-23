@@ -39,7 +39,7 @@ class AdminCabang extends Model
 {
     use HasApiTokens, Notifiable, SoftDeletes;
 
-    protected $fillable = ["cabang_id","nama_ac", "telp_ac", "email_ac","password_ac", "photo_profile"];
+    protected $fillable = ["cabang_id","nama_ac", "telp_ac", "email_ac","password_ac", "photo_profile", "type"];
 
     public function cabang(): BelongsTo
     {
