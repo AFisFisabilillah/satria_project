@@ -124,6 +124,10 @@ class ResetPasswordController extends Controller
                 "password_pelamar" => Hash::make($data['password']),
             ]);
 
+        DB::table("reset_passwords")->where("reset_passwords.id", $reset->id)->update([
+            "is_used" => true
+        ]);
+
         if (!$isSuccess) {
             return response()->json(["message" => "Gagal mengubah password"], 400);
         }
