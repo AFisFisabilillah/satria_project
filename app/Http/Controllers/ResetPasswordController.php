@@ -107,7 +107,7 @@ class ResetPasswordController extends Controller
             ->select("pelamars.id_pelamar","reset_passwords.id","reset_passwords.is_valid", "reset_passwords.is_used")
             ->where('token', $data['token'])->first();
 
-        if(!$reset->id){
+        if(!$reset){
             return response()->json(["message" => "Token tidak ditemukan"], 404);
         }
 
