@@ -367,5 +367,30 @@ class PelamarController extends Controller
         return response()->json(["message" => "Pelamar deleted successfully"]);
     }
 
+    public function deleteMyAccount(Request $request)
+    {
+        $pelamar = auth("pelamar")->user();
+
+
+        if ($pelamar->ktp_pelamar && Storage::disk('public')->exists($pelamar->ktp_pelamar)) {
+            Storage::disk('public')->delete($pelamar->ktp_pelamar);
+        }
+
+        if ($pelamar->profile_pelamar && Storage::disk('public')->exists($pelamar->profile_pelamar)) {
+            Storage::disk('public')->delete($pelamar->profile_pelamar);
+        }
+
+        $pelamar->email_pelamar = $pelamar->email_pelamar . '_deleted_' . time();
+        $pelamar->telp_pelamar = $pelamar->telp_pelamar . '_deleted_' . time();
+        $pelamar->save();
+        $pelamar->tokens()->delete();
+        $pelamar->delete();
+
+        return response()->json([
+            "status" => "success",
+            "message" => "Akun berhasil dihapus"
+        ]);
+    }
+
 
 }

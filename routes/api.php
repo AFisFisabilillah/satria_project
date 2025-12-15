@@ -14,8 +14,8 @@ use App\Http\Controllers\AdminDirekturController;
 
 Route::post("/pelamar/register", [PelamarController::class, "register"]);
 Route::post("/pelamar/login", [PelamarController::class, "login"]);
-Route::get("/lowongan/search",[LowonganController::class, "searchLowongan"]);
-Route::get("/lowongan/{lowonganId}",[LowonganController::class, "getLowonganById"]);
+Route::get("/lowongan/search", [LowonganController::class, "searchLowongan"]);
+Route::get("/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
 Route::get("/artikel", [ArtikelController::class, "getAllArtikelOnMobile"]);
 Route::get("/filter/domisili", [PelamarController::class, "getAllDomisili"]);
 Route::get("/filter/negara", [LowonganController::class, "filterNegara"]);
@@ -27,15 +27,16 @@ Route::post("/reset-password", [\App\Http\Controllers\ResetPasswordController::c
 Route::post("/resend-code", [\App\Http\Controllers\ResetPasswordController::class, "resendCode"]);
 
 Route::middleware(['auth:pelamar'])->group(function () {
-   Route::get("/pelamar/profile", [PelamarController::class, "profile"]);
-   Route::get("/pelamar/logout", [PelamarController::class, "logout"]);
-   Route::post("/pelamar/update", [PelamarController::class, "profileComplete"]);
+    Route::delete("/pelamar/remove-acount", [PelamarController::class, "deleteMyAccount"]);
+    Route::get("/pelamar/profile", [PelamarController::class, "profile"]);
+    Route::get("/pelamar/logout", [PelamarController::class, "logout"]);
+    Route::post("/pelamar/update", [PelamarController::class, "profileComplete"]);
 
-   Route::get("/pelamar/lowongan/{lowonganId}/lamar", [PelamarController::class, "lamar"]);
-   Route::get("/pelamar/lowongan/{lowonganId}/pendaftaran", [\App\Http\Controllers\PendaftaranController::class, "getDetailPendaftaranByLowonganId"]);
+    Route::get("/pelamar/lowongan/{lowonganId}/lamar", [PelamarController::class, "lamar"]);
+    Route::get("/pelamar/lowongan/{lowonganId}/pendaftaran", [\App\Http\Controllers\PendaftaranController::class, "getDetailPendaftaranByLowonganId"]);
 
-   Route::get("/pelamar/pendaftaran", [\App\Http\Controllers\PendaftaranController::class, "userPendaftaran"]);
-   Route::get("/pelamar/pendaftaran/{pendaftranId}", [\App\Http\Controllers\PendaftaranController::class, "userGetPendaftaranById"]);
+    Route::get("/pelamar/pendaftaran", [\App\Http\Controllers\PendaftaranController::class, "userPendaftaran"]);
+    Route::get("/pelamar/pendaftaran/{pendaftranId}", [\App\Http\Controllers\PendaftaranController::class, "userGetPendaftaranById"]);
 });
 
 //Super ADMIN
@@ -74,40 +75,40 @@ Route::middleware(['auth:super_admin'])->group(function () {
     Route::post("/cabang/{cabangId}/admin-cabang", [AdminCabangController::class, "create"]);
     Route::get("/cabang/{cabangId}/admin-cabang", [AdminCabangController::class, "getAllAdminCabangs"]);
     Route::post("/cabang/{cabangId}/admin-cabang/{adminCabangId}", [AdminCabangController::class, "update"]);
-    Route::delete("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "delete"]);
-    Route::get("/cabang/{cabangId}/admin-cabang/{adminCabangId}",[AdminCabangController::class, "getByid"]);
+    Route::delete("/cabang/{cabangId}/admin-cabang/{adminCabangId}", [AdminCabangController::class, "delete"]);
+    Route::get("/cabang/{cabangId}/admin-cabang/{adminCabangId}", [AdminCabangController::class, "getByid"]);
 
 //    Lowongan
-    Route::post("/super-admin/lowongan",[LowonganController::class, "create"]);
-    Route::get("/super-admin/lowongan/search",[LowonganController::class, "searchLowongan"]);
+    Route::post("/super-admin/lowongan", [LowonganController::class, "create"]);
+    Route::get("/super-admin/lowongan/search", [LowonganController::class, "searchLowongan"]);
     Route::get("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "getLowonganById"]);
     Route::put("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "update"]);
     Route::delete("/super-admin/lowongan/{lowonganId}", [LowonganController::class, "delete"]);
 
     Route::post("/super-admin/pelamar/create", [PelamarController::class, "create"]);
-    Route::get("/super-admin/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
-    Route::get("/super-admin/pelamar/export",[PelamarController::class, "superAdminGetAllPelamarExport"]);
+    Route::get("/super-admin/pelamar", [PelamarController::class, "superAdminGetAllPelamar"]);
+    Route::get("/super-admin/pelamar/export", [PelamarController::class, "superAdminGetAllPelamarExport"]);
     Route::post("/admin-cabang/pelamar/{pelamarId}", [PelamarController::class, "update"]);
-    Route::get("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
-    Route::patch("/super-admin/pelamar/{pelamarId}",[PelamarController::class, "changePassword"]);
-    Route::get("/super-admin/pelamar/{pelamarId}/pendaftaran",[PelamarController::class, "getAllPendaftaranByUser"]);
-    Route::patch("/super-admin/pelamar/{pelamarId}/reject",[PendaftaranController::class, "changeStatusToReject"]);
+    Route::get("/super-admin/pelamar/{pelamarId}", [PelamarController::class, "superAdminGetDetailPelamar"]);
+    Route::patch("/super-admin/pelamar/{pelamarId}", [PelamarController::class, "changePassword"]);
+    Route::get("/super-admin/pelamar/{pelamarId}/pendaftaran", [PelamarController::class, "getAllPendaftaranByUser"]);
+    Route::patch("/super-admin/pelamar/{pelamarId}/reject", [PendaftaranController::class, "changeStatusToReject"]);
 
 //    Admin direktur
-    Route::post("/super-admin/admin-direktur",[AdminDirekturController::class, "create"]);
-    Route::get("/super-admin/admin-direktur",[AdminDirekturController::class, "getAll"]);
-    Route::get("/super-admin/admin-direktur/{adminDirekturId}",[AdminDirekturController::class, "get"]);
-    Route::post("/super-admin/admin/{adminDirekturId}",[AdminDirekturController::class, "updateAdmin"]);
-    Route::delete("/super-admin/admin-direktur/{adminDirekturId}",[AdminDirekturController::class, "delete"]);
+    Route::post("/super-admin/admin-direktur", [AdminDirekturController::class, "create"]);
+    Route::get("/super-admin/admin-direktur", [AdminDirekturController::class, "getAll"]);
+    Route::get("/super-admin/admin-direktur/{adminDirekturId}", [AdminDirekturController::class, "get"]);
+    Route::post("/super-admin/admin/{adminDirekturId}", [AdminDirekturController::class, "updateAdmin"]);
+    Route::delete("/super-admin/admin-direktur/{adminDirekturId}", [AdminDirekturController::class, "delete"]);
 //    Lowongan
     Route::get("/super-admin/pendaftaran", [PendaftaranController::class, "getAll"]);
-    Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran",[PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
-    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
-    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/interview",[PendaftaranController::class, "changeStatusToInterview"]);
-    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/accepted",[PendaftaranController::class, "changeStatusToAccepted"]);
-    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
+    Route::get("/super-admin/lowongan/{lowonganId}/pendaftaran", [PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/review-by-hr", [PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/interview", [PendaftaranController::class, "changeStatusToInterview"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/accepted", [PendaftaranController::class, "changeStatusToAccepted"]);
+    Route::patch("/super-admin/pendaftaran/{pendaftaranId}/rejected", [PendaftaranController::class, "changeStatusToReject"]);
 
-     Route::post("/super-admin", [SuperAdminController::class, "create"]);
+    Route::post("/super-admin", [SuperAdminController::class, "create"]);
     Route::post("/super-admin/{superAdminId}", [SuperAdminController::class, "update"]);
     Route::delete("/super-admin/{superAdminId}", [SuperAdminController::class, "delete"]);
     Route::get("/super-admin", [SuperAdminController::class, "getAll"]);
@@ -126,21 +127,20 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::get("/staff/profile", [AdminCabangController::class, "profile"])->middleware("staff");
     Route::post("/staff/updatea-profile", [AdminCabangController::class, "update_profile"])->middleware("staff");
     Route::post("/staff/pelamar/create", [PelamarController::class, "create"])->middleware("staff");;
-    Route::get("/staff/pelamar",[PelamarController::class, "superAdminGetAllPelamar"])->middleware("staff");
+    Route::get("/staff/pelamar", [PelamarController::class, "superAdminGetAllPelamar"])->middleware("staff");
     Route::post("/staff/pelamar/{pelamarId}", [PelamarController::class, "update"])->middleware("staff");
-    Route::get("/staff/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"])->middleware("staff");
+    Route::get("/staff/pelamar/{pelamarId}", [PelamarController::class, "superAdminGetDetailPelamar"])->middleware("staff");
 
     Route::post("/staff/pelamar/{pelamarId}/changePassword", [PelamarController::class, "changePassword"])->middleware("staff");
 
 
-
-    Route::get("/admin-cabang/pelamar/export",[PelamarController::class, "superAdminGetAllPelamarExport"]);
+    Route::get("/admin-cabang/pelamar/export", [PelamarController::class, "superAdminGetAllPelamarExport"]);
     Route::post("/admin-cabang/pelamar/create", [PelamarController::class, "create"]);
-    Route::get("/admin-cabang/pelamar/{pelamarId}/pendaftaran",[PelamarController::class, "getAllPendaftaranByUser"]);
+    Route::get("/admin-cabang/pelamar/{pelamarId}/pendaftaran", [PelamarController::class, "getAllPendaftaranByUser"]);
     Route::post("/admin-cabang/pelamar/{pelamarId}", [PelamarController::class, "update"]);
-    Route::get("/admin-cabang/pelamar/{pelamarId}",[PelamarController::class, "superAdminGetDetailPelamar"]);
+    Route::get("/admin-cabang/pelamar/{pelamarId}", [PelamarController::class, "superAdminGetDetailPelamar"]);
     Route::post("/admin-cabang/pelamar/{pelamarId}/changePassword", [PelamarController::class, "changePassword"]);
-    Route::get("/admin-cabang/pelamar",[PelamarController::class, "superAdminGetAllPelamar"]);
+    Route::get("/admin-cabang/pelamar", [PelamarController::class, "superAdminGetAllPelamar"]);
 
 
     Route::get("/admin-cabang/dashboard", [SuperAdminController::class, "dashboard"]);
@@ -149,13 +149,13 @@ Route::middleware(['auth:admin_cabang'])->group(function () {
     Route::post("/admin-cabang/update-profile", [AdminCabangController::class, "update_profile"]);
 
 //    Pendaftaran
-    Route::get("/admin-cabang/pendaftaran/{pendaftaranId}/follow-up",[PendaftaranController::class, "followup" ] );
-    Route::get("/admin-cabang/lowongan/{lowonganId}/pendaftaran",[\App\Http\Controllers\PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
-    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/review-by-hr",[PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
-    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/interview",[PendaftaranController::class, "changeStatusToInterview"]);
-    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/accepted",[PendaftaranController::class, "changeStatusToAccepted"]);
-    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/rejected",[PendaftaranController::class, "changeStatusToReject"]);
-    Route::get("/admin-cabang/pendaftaran/cabang",[PendaftaranController::class, "getByCabang"]);
+    Route::get("/admin-cabang/pendaftaran/{pendaftaranId}/follow-up", [PendaftaranController::class, "followup"]);
+    Route::get("/admin-cabang/lowongan/{lowonganId}/pendaftaran", [\App\Http\Controllers\PendaftaranController::class, "getAllPendaftaranByLowonganId"]);
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/review-by-hr", [PendaftaranController::class, "changeStatusToRiviewedByHrd"]);
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/interview", [PendaftaranController::class, "changeStatusToInterview"]);
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/accepted", [PendaftaranController::class, "changeStatusToAccepted"]);
+    Route::patch("/admin-cabang/pendaftaran/{pendaftaranId}/rejected", [PendaftaranController::class, "changeStatusToReject"]);
+    Route::get("/admin-cabang/pendaftaran/cabang", [PendaftaranController::class, "getByCabang"]);
     Route::get("/admin-cabang/pendaftaran", [PendaftaranController::class, "getAllPendaftaran"]);
 //    Pelamar
 });
