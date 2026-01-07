@@ -61,7 +61,7 @@ class PelamarController extends Controller
             "nama_pelamar" => $data['nama'],
             "email_pelamar" => $data['email'],
             "telp_pelamar" => $data['telp'],
-            "domisili_pelamar" => $data['domisili'],
+            "domisili_pelamar" => $data['domisili'] ?? null,
             "password_pelamar" => Hash::make($data['password']),
         ]);
 
@@ -167,13 +167,6 @@ class PelamarController extends Controller
         if ($lowongan->kuota_lowongan == 0) {
             return response()->json([
                 "message" => "maaf kuota lowongan telah habis",
-            ], 400);
-        }
-
-
-        if (!$pelamar->sudah_lengkap) {
-            return response()->json([
-                "message" => "lengkain data profile terlebih dahulu"
             ], 400);
         }
 
@@ -380,9 +373,6 @@ class PelamarController extends Controller
             Storage::disk('public')->delete($pelamar->profile_pelamar);
         }
 
-        $pelamar->email_pelamar = $pelamar->email_pelamar . '_deleted_' . time();
-        $pelamar->telp_pelamar = $pelamar->telp_pelamar . '_deleted_' . time();
-        $pelamar->save();
         $pelamar->tokens()->delete();
         $pelamar->delete();
 

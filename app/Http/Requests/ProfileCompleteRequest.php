@@ -26,8 +26,19 @@ class ProfileCompleteRequest extends FormRequest
             "tanggal_lahir" => "required|date|date_format:Y-m-d|before:today",
             "jenis_kelamin" => "required|in:Laki-laki,Perempuan",
             "status_nikah" => "required|boolean",
-            "ktp" => "file|image|max:10240",
-            "profile"=>"file|mimes:jpg,jpeg,png|max:10240",
+            "ktp" => [
+                "file",
+                "max:10240",
+                "mimes:jpg,jpeg,png,heic,heif",
+                "mimetypes:image/jpeg,image/png,image/heic,image/heif",
+            ],
+
+            "profile" => [
+                "file",
+                "max:10240",
+                "mimes:jpg,jpeg,png,heic,heif",
+                "mimetypes:image/jpeg,image/png,image/heic,image/heif",
+            ],
         ];
     }
 }

@@ -26,7 +26,7 @@ class PelamarRegisterRequest extends FormRequest
             "email"=>"required|string|email|max:100|unique:pelamars,email_pelamar",
             "password"=>"required|string|min:8",
             'telp' => ["required", "string", "max:15", "regex:/^(\+62|62|0)8[1-9][0-9]{6,10}$/", "unique:pelamars,telp_pelamar"],
-            "domisili"=>"required|string|max:100|min:3"
+            "domisili"=>"nullable|string|max:100|min:3"
         ];
     }
 }
